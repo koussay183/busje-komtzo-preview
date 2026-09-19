@@ -21,47 +21,10 @@
     });
   }
 
-  const euro = new Intl.NumberFormat('nl-NL', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
   const decimal = new Intl.NumberFormat('nl-NL', {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1
   });
-
-  const estimateForm = document.querySelector('#estimate-form');
-  if (estimateForm) {
-    const STANDARD_TEAM = 2;
-    const hours = document.querySelector('#hours');
-    const kilometres = document.querySelector('#kilometres');
-    const calculate = () => {
-      const moverCount = STANDARD_TEAM;
-      const hourCount = Math.min(24, Math.max(1, Number(hours.value) || 1));
-      const kmCount = Math.min(1000, Math.max(0, Number(kilometres.value) || 0));
-      const labour = moverCount * hourCount * 29.5;
-      const vehicle = hourCount <= 4 ? 95 : 125;
-      const travel = kmCount * .65;
-      const subtotal = labour + vehicle + travel;
-      const vat = subtotal * .21;
-      const total = subtotal + vat;
-      document.querySelector('#labour-total').textContent = euro.format(labour);
-      document.querySelector('#vehicle-total').textContent = euro.format(vehicle);
-      document.querySelector('#vehicle-label').textContent = hourCount <= 4 ? 'Bestelbus · opdracht t/m 4 uur' : 'Verhuiswagen · opdracht langer dan 4 uur';
-      document.querySelector('#travel-total').textContent = euro.format(travel);
-      document.querySelector('#subtotal').textContent = euro.format(subtotal);
-      document.querySelector('#vat-total').textContent = euro.format(vat);
-      document.querySelector('#grand-total').textContent = euro.format(total);
-      document.querySelector('#estimate-note').textContent = `Indicatie op basis van ${hourCount.toLocaleString('nl-NL')} uur en ${kmCount.toLocaleString('nl-NL')} gereden km en de bevestigde tarieven. Busje komt zo bepaalt de definitieve inzet en offerte; dit is geen vaste offerte.`;
-      const params = new URLSearchParams({ kilometres: String(kmCount) });
-      document.querySelector('#estimate-quote-link').href = `offerte.html?${params}`;
-    };
-    estimateForm.addEventListener('input', calculate);
-    estimateForm.addEventListener('change', calculate);
-    calculate();
-  }
 
   const quoteForm = document.querySelector('#quote-form');
   if (!quoteForm) return;
@@ -129,38 +92,17 @@
   const getPlanning = () => {
     const volume = clampNumber(volumeOutput?.value, 0, 300);
     const km = clampNumber(quoteForm.querySelector('#route-km')?.value, 0, 1000);
-    if (volume <= 0) return { volume, km, movers: 0, hours: 0, low: 0, high: 0 };
-    const movers = volume <= 12 ? 2 : volume <= 28 ? 3 : 4;
-    const floorFrom = clampNumber(quoteForm.querySelector('#floor-from')?.value, 0, 30);
-    const floorTo = clampNumber(quoteForm.querySelector('#floor-to')?.value, 0, 30);
-    const liftFrom = quoteForm.querySelector('#lift-from')?.checked;
-    const liftTo = quoteForm.querySelector('#lift-to')?.checked;
-    const walking = clampNumber(quoteForm.querySelector('#walking-distance')?.value, 0, 1);
-    const accessHours = (liftFrom ? 0 : Math.min(2.5, floorFrom * .3)) + (liftTo ? 0 : Math.min(2.5, floorTo * .3)) + walking;
-    const hours = Math.min(24, Math.ceil(Math.max(2, volume / (movers * 2.6) + accessHours) * 2) / 2);
-    const labour = movers * hours * 29.5;
-    const vehicle = hours <= 4 ? 95 : 125;
-    const subtotal = labour + vehicle + km * .65;
-    const total = subtotal * 1.21;
-    return { volume, km, movers, hours, low: total * .9, high: total * 1.15 };
+    return { volume, km };
   };
 
   const updatePlanning = () => {
     const plan = getPlanning();
-    const team = plan.movers ? `${plan.movers} verhuizers` : '—';
-    const hours = plan.hours ? `circa ${decimal.format(plan.hours)} uur` : '—';
-    const range = plan.volume ? `${euro.format(plan.low)} – ${euro.format(plan.high)}` : 'Vul eerst uw inboedel in';
     const setText = (selector, value) => {
       const node = quoteForm.querySelector(selector);
       if (node) node.textContent = value;
     };
-    setText('#team-recommendation', team);
-    setText('#hours-recommendation', hours);
     setText('#final-volume', `${decimal.format(plan.volume)} m³`);
-    setText('#final-team', team);
-    setText('#final-hours', hours);
     setText('#final-km', `${decimal.format(plan.km)} km`);
-    setText('#quote-estimate-range', range);
   };
 
   const calculateInventory = () => {
@@ -302,7 +244,7 @@
     }
     event.preventDefault();
     const plan = getPlanning();
-    quoteForm.innerHTML = `<div class="success-state" role="status"><p class="eyebrow">Lokale controle voltooid</p><h2>Uw aanvraag bevat ${decimal.format(plan.volume)} m³ aan geschatte inboedel.</h2><p>De indicatieve prijsband is <strong>${euro.format(plan.low)} – ${euro.format(plan.high)}</strong> inclusief 21% btw. Deze prototypeversie heeft niets verzonden.</p><a class="button" href="index.html">Terug naar home</a></div>`;
+    quoteForm.innerHTML = `<div class="success-state" role="status"><p class="eyebrow">Aanvraag compleet</p><h2>Bedankt! Uw verhuisaanvraag van ${decimal.format(plan.volume)} m³ staat klaar.</h2><p>Busje komt zo neemt persoonlijk contact met u op voor een voorstel op maat. Sneller schakelen? App of bel ons direct.</p><div class="contact-hooks"><a class="button button-whatsapp" href="https://wa.me/31634755656?text=Hallo%2C%20ik%20heb%20zojuist%20mijn%20verhuisaanvraag%20ingevuld%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a><a class="button" href="tel:+31850508282">Bel 085 050 8282</a></div><p class="prototype-note">Ontwerpconcept: deze versie verzendt nog geen gegevens.</p></div>`;
   });
 
   calculateInventory();
