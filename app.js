@@ -244,9 +244,14 @@
     }
     event.preventDefault();
     const plan = getPlanning();
-    quoteForm.innerHTML = `<div class="success-state" role="status"><p class="eyebrow">Aanvraag compleet</p><h2>Bedankt! Uw verhuisaanvraag van ${decimal.format(plan.volume)} m³ staat klaar.</h2><p>Busje komt zo neemt persoonlijk contact met u op voor een voorstel op maat. Sneller schakelen? App of bel ons direct.</p><div class="contact-hooks"><a class="button button-whatsapp" href="https://wa.me/31659742744?text=Hallo%2C%20ik%20heb%20zojuist%20mijn%20verhuisaanvraag%20ingevuld%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a><a class="button" href="tel:+31850508282">Bel 085 050 8282</a></div><p class="prototype-note">Ontwerpconcept: deze versie verzendt nog geen gegevens.</p></div>`;
+    quoteForm.innerHTML = `<div class="success-state" role="status"><p class="eyebrow">Aanvraag compleet</p><h2>Bedankt! Uw verhuisaanvraag van ${decimal.format(plan.volume)} m³ staat klaar.</h2><p>Busje komt zo neemt persoonlijk contact met u op voor een voorstel op maat. Sneller schakelen? App of bel ons direct.</p><div class="contact-hooks"><a class="button button-whatsapp" href="https://wa.me/31634755656?text=Hallo%2C%20ik%20heb%20zojuist%20mijn%20verhuisaanvraag%20ingevuld%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a><a class="button" href="tel:+31850508282">Bel 085 050 8282</a></div><p class="prototype-note">Ontwerpconcept: deze versie verzendt nog geen gegevens.</p></div>`;
   });
 
   calculateInventory();
   render(false);
+
+  // Deep link from the mobile "Aanvraag" button: land on the form, ready to fill.
+  if (location.hash === '#quote-form') {
+    requestAnimationFrame(() => quoteForm.scrollIntoView({ block: 'start' }));
+  }
 })();

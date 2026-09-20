@@ -64,8 +64,13 @@ button, input, select, textarea { font: inherit; }
 #site-nav a { min-height: 44px; padding: 0 13px; display: inline-flex; align-items: center; border-bottom: 2px solid transparent; color: #284e54; font-size: 14px; font-weight: 700; text-decoration: none; }
 #site-nav a:hover { color: var(--teal-dark); border-color: var(--line-strong); }
 #site-nav a[aria-current="page"] { color: var(--teal-deep); border-color: var(--orange); }
-.menu-toggle { width: 48px; height: 48px; padding: 13px; display: none; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; }
-.menu-toggle > span:not(.sr-only) { height: 2px; margin: 4px 0; display: block; background: var(--ink); }
+.menu-toggle { width: 48px; height: 48px; padding: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--white); cursor: pointer; transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+.menu-toggle > span:not(.sr-only) { width: 24px; height: 2px; margin: 0; display: block; border-radius: 2px; background: var(--teal-deep); transition: transform .24s cubic-bezier(.2,.7,.3,1), opacity .18s ease; }
+.menu-toggle:hover { border-color: var(--teal-dark); background: var(--teal-soft); box-shadow: 0 3px 10px rgba(8,38,48,.10); }
+.menu-toggle[aria-expanded="true"] { border-color: var(--teal-dark); background: var(--teal-soft); }
+.menu-toggle[aria-expanded="true"] > span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.menu-toggle[aria-expanded="true"] > span:nth-child(2) { opacity: 0; transform: scaleX(.35); }
+.menu-toggle[aria-expanded="true"] > span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
 .button { min-height: 52px; padding: 13px 24px; display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); border: 2px solid var(--teal-dark); border-radius: var(--radius-sm); color: var(--white); background: var(--teal-dark); font-weight: 760; line-height: 1.2; text-align: center; text-decoration: none; cursor: pointer; box-shadow: var(--shadow-xs); transition: transform .16s ease, box-shadow .16s ease, background-color .16s ease, border-color .16s ease; }
 .button:hover { transform: translateY(-1px); border-color: var(--teal-deep); background: var(--teal-deep); box-shadow: var(--shadow-sm); }
@@ -506,7 +511,7 @@ legend { margin-bottom: var(--s3); color: #304f58; font-size: 14px; font-weight:
 @media (max-width: 820px) {
   .utility { display: none; }
   .nav-shell { min-height: 70px; }
-  .menu-toggle { display: block; }
+  .menu-toggle { display: flex; }
   .header-cta { display: none; }
   #site-nav { position: absolute; inset: 100% 0 auto; max-height: calc(100vh - 74px); padding: var(--s4) var(--s5) var(--s6); display: none; flex-direction: column; align-items: stretch; gap: 0; overflow: auto; border-bottom: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow-sm); }
   #site-nav.open { display: flex; }
@@ -790,9 +795,9 @@ body.addr-map-open { overflow: hidden; }
 .leaflet-container { font: inherit; }
 
 @media (max-width: 560px) {
-  .addr-search-control { flex-wrap: wrap; padding-left: 40px; }
+  .addr-search-control { flex-wrap: nowrap; padding-left: 40px; gap: 6px; }
   .addr-map-btn span { display: none; }
-  .addr-map-btn { padding: 0 12px; }
+  .addr-map-btn { flex: 0 0 auto; padding: 0 12px; }
   .addr-map-actions .button { flex: 1 1 auto; }
 }
 
@@ -812,4 +817,34 @@ body.addr-map-open { overflow: hidden; }
   .home-hero .hero-copy > .proof-list { margin-top: var(--s5) !important; }
   .home-hero .hero-actions { margin-top: var(--s5); gap: 10px; }
   .home-hero .hero-actions .button { min-height: 54px; }
+}
+
+/* ================================================================
+   Mobile offerte: reach the form fast + cleaner form UI (2026-09-20c)
+   ================================================================ */
+#quote-form { scroll-margin-top: 96px; }
+
+@media (max-width: 640px) {
+  /* Compact the quote hero so the form sits near the top on phones */
+  .quote-hero.compact { padding: var(--s4) 0 var(--s3); }
+  .quote-hero.compact .breadcrumbs { margin-bottom: var(--s3); }
+  .quote-hero.compact h1 { font-size: clamp(24px, 6.6vw, 32px); line-height: 1.12; letter-spacing: -.02em; }
+  .quote-hero.compact .lead { font-size: 15px; }
+  .quote-workspace { padding-top: var(--s3); }
+  .form-step h2 { font-size: 23px; }
+  .step-intro { margin-bottom: var(--s5); font-size: 15px; }
+
+  /* Address fields: postcode full, huisnr + toevoeging paired, street/city full */
+  .address-fields { grid-template-columns: 1fr 96px; }
+  .address-fields .postcode-field { grid-column: 1 / -1; }
+  .address-fields .number-field { grid-column: 1; }
+  .address-fields .addition-field { grid-column: 2; }
+  .address-fields .street-field, .address-fields .city-field { grid-column: 1 / -1; }
+}
+
+/* Progress: clean numbered stepper (no cramped labels) on small phones */
+@media (max-width: 520px) {
+  .form-progress { gap: 6px; }
+  .form-progress span { font-size: 0; gap: 0; padding-top: 8px; align-items: center; }
+  .form-progress b { margin: 0 auto; font-size: 12px; }
 }
