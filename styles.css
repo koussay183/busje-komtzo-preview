@@ -802,3 +802,14 @@ body.addr-map-open { overflow: hidden; }
   .contact-hooks { flex-direction: column; }
   .contact-hooks .button { width: 100%; flex: 1 1 auto; }
 }
+
+/* ---- Hero spacing + sticky mobile bar polish (2026-09-20b) ---- */
+.hero-actions { margin-top: var(--s5); }
+.mobile-actions a { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.mobile-actions a .btn-icon { width: 18px; height: 18px; margin: 0; vertical-align: 0; }
+@media (max-width: 640px) {
+  .home-hero, .pricing-hero, .inner-hero { padding: var(--s6) 0 var(--s6); }
+  .home-hero .hero-copy > .proof-list { margin-top: var(--s5) !important; }
+  .home-hero .hero-actions { margin-top: var(--s5); gap: 10px; }
+  .home-hero .hero-actions .button { min-height: 54px; }
+}
