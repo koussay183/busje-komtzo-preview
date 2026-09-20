@@ -732,3 +732,19 @@ summary::after { transition: transform .18s var(--ease); }
 .review-google-card p { margin: 0; color: #33525b; font-size: 15px; line-height: 1.55; }
 @media (prefers-reduced-motion: reduce) { .reviews-track { animation: none; } .reviews-reel { height: auto; } }
 @media (max-width: 820px) { .reviews-google .shell { grid-template-columns: 1fr; } .reviews-reel { height: 400px; } }
+
+/* ---- Mobile-first hero: show the truck photo at the top on phones (2026-09-20) ---- */
+@media (max-width: 820px) {
+  .home-hero .hero-photo { order: -1; aspect-ratio: 16 / 11; max-height: 46vh; }
+  .home-hero .hero-photo img { object-position: center 58%; }
+  .home-hero .hero-copy { max-width: none; }
+}
+
+/* ---- Offerte: form on top, info below ---- */
+.quote-hero.compact { padding: clamp(26px, 4vw, 44px) 0 clamp(16px, 2.5vw, 26px); }
+.quote-hero.compact .breadcrumbs { margin-bottom: var(--s4); }
+.quote-hero.compact .lead { margin-bottom: 0; max-width: 760px; }
+.quote-workspace { padding-top: clamp(18px, 2.5vw, 28px); }
+.quote-info-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .72fr); gap: clamp(32px, 6vw, 72px); align-items: center; }
+.quote-info-grid .contact-hooks { margin-top: var(--s5); }
+@media (max-width: 820px) { .quote-info-grid { grid-template-columns: 1fr; } }
