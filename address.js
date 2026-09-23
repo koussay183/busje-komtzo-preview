@@ -104,12 +104,12 @@
       `<div class="addr-search-field">` +
         `<label for="${inputId}">Zoek uw adres</label>` +
         `<div class="addr-search-control">` +
-          `<svg class="addr-ico" aria-hidden="true"><use href="assets/bcz-icons.svg#search"></use></svg>` +
+          `<svg class="addr-ico" aria-hidden="true"><use href="assets/bcz-icons.svg?v=20260923-seo30#search"></use></svg>` +
           `<input id="${inputId}" type="text" autocomplete="off" spellcheck="false" role="combobox" ` +
             `aria-expanded="false" aria-autocomplete="list" aria-controls="${listId}" ` +
             `placeholder="Straat + huisnr., bv. Vredenburg 40 Utrecht">` +
           `<button type="button" class="addr-map-btn" aria-label="Kies uw adres op de kaart">` +
-            `<svg aria-hidden="true"><use href="assets/bcz-icons.svg#pin"></use></svg><span>Kaart</span></button>` +
+            `<svg aria-hidden="true"><use href="assets/bcz-icons.svg?v=20260923-seo30#pin"></use></svg><span>Kaart</span></button>` +
         `</div>` +
       `</div>` +
       `<ul class="addr-suggest" id="${listId}" role="listbox" hidden></ul>` +
@@ -153,7 +153,7 @@
       if (!found.length) { closeList(); return; }
       list.innerHTML = found
         .map((a, i) => `<li id="${listId}-${i}" role="option" class="addr-option">` +
-          `<svg aria-hidden="true"><use href="assets/bcz-icons.svg#pin"></use></svg>` +
+          `<svg aria-hidden="true"><use href="assets/bcz-icons.svg?v=20260923-seo30#pin"></use></svg>` +
           `<span>${a.label.replace(/</g, '&lt;')}</span></li>`)
         .join('');
       [...list.children].forEach((li, i) => {

@@ -964,3 +964,20 @@ body.addr-map-open { overflow: hidden; }
   body { background: #fff; }
   .checklist-hero { padding: 0 0 12px; }
 }
+
+/* ================================================================
+   2026 modern refresh — softer radii, cards & Lucide icons (site-wide)
+   ================================================================ */
+.button { border-radius: 12px; }
+.service-card, .review-google-card, .photo-card, .lead-card, .checklist-cta,
+.faq-help, .decision-card, .quote-form.lead-form, .contact-card, .side-note,
+.calculator-panel, .calculator-summary, .box-converter, .lead-magnet { border-radius: 20px; }
+.service-card:hover { box-shadow: 0 16px 36px rgba(8,38,48,.12); }
+.review-google-card { box-shadow: 0 10px 28px rgba(8,38,48,.06); }
+.faq-list details, .check-tile, .cl-item, .addr-search-control, .addr-map-btn,
+.field-grid input, .lead-fields input, .lead-fields select, .lead-fields textarea,
+.address-fields input, .quote-form input, .quote-form select, .quote-form textarea,
+.lead-magnet input { border-radius: 12px; }
+/* Lucide-style service-card icon tile */
+.card-number { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px; color: var(--teal-dark); background: var(--teal-soft); }
+.card-number svg { width: 26px; height: 26px; }
