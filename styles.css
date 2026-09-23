@@ -848,3 +848,119 @@ body.addr-map-open { overflow: hidden; }
   .form-progress span { font-size: 0; gap: 0; padding-top: 8px; align-items: center; }
   .form-progress b { margin: 0 auto; font-size: 12px; }
 }
+
+/* ================================================================
+   FAQ accordion — modern card style + chevrons (2026-09-21)
+   ================================================================ */
+.faq-section .faq-head { max-width: 720px; margin: 0 auto clamp(28px, 5vw, 48px); text-align: center; }
+.faq-section .faq-head > p:last-child { color: var(--muted); }
+
+.faq-list { max-width: 860px; margin: 0 auto; border-top: 0; display: grid; gap: var(--s3); }
+.faq-list details { border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow-xs); transition: border-color .15s ease, box-shadow .15s ease; }
+.faq-list details[open] { border-color: var(--teal-dark); box-shadow: var(--shadow-sm); }
+.faq-list summary { padding: 20px 56px 20px 22px; color: var(--ink-strong); font-size: 16px; }
+.faq-list summary::after { content: ""; position: absolute; right: 24px; top: 50%; width: 10px; height: 10px; border: 0; border-right: 2.5px solid var(--teal-dark); border-bottom: 2.5px solid var(--teal-dark); border-radius: 1px; transform: translateY(-60%) rotate(45deg); transition: transform .2s ease; }
+.faq-list details[open] summary::after { content: ""; transform: translateY(-30%) rotate(-135deg); }
+.faq-list details p { max-width: none; padding: 0 22px 20px; color: #46636b; }
+
+.faq-help { max-width: 860px; margin: clamp(28px, 5vw, 48px) auto 0; padding: clamp(24px, 4vw, 36px); text-align: center; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--paper); }
+.faq-help strong { display: block; color: var(--ink-strong); font-size: 20px; }
+.faq-help > p { margin: var(--s2) auto var(--s5); max-width: 520px; color: var(--muted); }
+.faq-help .contact-hooks { justify-content: center; }
+.faq-help .contact-hooks .button { flex: 0 1 auto; }
+
+@media (max-width: 640px) {
+  .faq-list summary { padding: 16px 46px 16px 16px; font-size: 15px; }
+  .faq-list summary::after { right: 18px; }
+  .faq-list details p { padding: 0 16px 16px; }
+  .faq-help .contact-hooks { flex-direction: column; }
+  .faq-help .contact-hooks .button { width: 100%; }
+}
+
+/* ================================================================
+   Short lead form (offerte)  ·  2026-09-21
+   ================================================================ */
+.quote-form.lead-form { min-height: 0; max-width: 780px; margin-inline: auto; }
+.lead-form-head { margin-bottom: var(--s5); }
+.lead-form-head h2 { font-size: clamp(23px, 3.2vw, 30px); }
+.lead-form-head > p { color: var(--muted); max-width: 640px; }
+.lead-fields { display: grid; gap: var(--s4); }
+.field-hint { margin: -8px 2px 0; color: var(--muted); font-size: 13px; }
+.lead-fields em, .lead-magnet em { color: var(--muted); font-style: normal; font-weight: 500; font-size: .85em; }
+.lead-reassure { margin: var(--s5) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s3) var(--s5); list-style: none; }
+.lead-reassure li { position: relative; padding-left: 26px; color: var(--ink); font-size: 14px; font-weight: 600; }
+.lead-reassure li::before { content: "✓"; position: absolute; left: 0; top: 0; width: 19px; height: 19px; display: inline-grid; place-items: center; border-radius: 50%; background: var(--teal-dark); color: #fff; font-size: 10px; font-weight: 900; }
+.quote-calc-link { margin-top: var(--s4); color: var(--muted); font-size: 14px; }
+.text-button { min-height: 44px; padding: 0 6px; border: 0; background: none; color: var(--teal-dark); font-weight: 700; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.text-button:hover { color: var(--teal-deep); }
+
+/* ================================================================
+   Interactive verhuischecklist  ·  2026-09-21
+   ================================================================ */
+.checklist-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .52fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+.checklist-toolbar { position: sticky; top: 84px; z-index: 5; margin-bottom: var(--s6); padding: var(--s4) var(--s5); display: grid; gap: var(--s4); border: 1px solid var(--line-strong); border-radius: var(--radius); background: var(--white); box-shadow: 0 6px 20px rgba(8,38,48,.06); }
+.cl-progress-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); }
+#cl-percent { color: var(--teal-deep); font-size: 19px; }
+#cl-count { color: var(--muted); font-size: 13px; font-weight: 600; }
+.cl-progress-track { height: 10px; border-radius: 99px; background: var(--teal-soft); overflow: hidden; }
+.cl-progress-bar { height: 100%; width: 0; border-radius: 99px; background: var(--orange); transition: width .3s ease; }
+.checklist-actions { display: flex; flex-wrap: wrap; gap: var(--s3); align-items: center; }
+
+.cl-group { margin-bottom: var(--s7); }
+.cl-group-head { display: flex; align-items: center; gap: var(--s3); margin-bottom: var(--s4); }
+.cl-num { flex: 0 0 auto; width: 38px; height: 38px; display: inline-grid; place-items: center; border-radius: 50%; background: var(--teal-dark); color: #fff; font-weight: 800; font-size: 16px; }
+.cl-group-head h2 { margin: 0; font-size: 20px; }
+.cl-group-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.cl-items { display: grid; gap: 6px; }
+.cl-items-grid { grid-template-columns: 1fr 1fr; }
+.cl-item { position: relative; display: flex; align-items: flex-start; gap: var(--s3); margin: 0; padding: 13px 15px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; transition: background-color .12s ease, border-color .12s ease; }
+.cl-item:hover { border-color: var(--line-strong); background: var(--paper); }
+.cl-item input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.cl-box { flex: 0 0 auto; width: 22px; height: 22px; margin-top: 1px; display: inline-grid; place-items: center; border: 2px solid var(--line-strong); border-radius: 6px; transition: background-color .12s ease, border-color .12s ease; }
+.cl-box::after { content: ""; width: 6px; height: 11px; margin-top: -2px; border-right: 2.5px solid #fff; border-bottom: 2.5px solid #fff; transform: rotate(45deg) scale(0); transition: transform .12s ease; }
+.cl-item input:checked ~ .cl-box, .cl-item.is-done .cl-box { background: var(--teal-dark); border-color: var(--teal-dark); }
+.cl-item input:checked ~ .cl-box::after, .cl-item.is-done .cl-box::after { transform: rotate(45deg) scale(1); }
+.cl-item input:focus-visible ~ .cl-box { outline: 3px solid var(--focus); outline-offset: 2px; }
+.cl-text { color: var(--ink); font-size: 15px; line-height: 1.5; }
+.cl-item.is-done .cl-text { color: var(--muted); text-decoration: line-through; }
+
+.checklist-aside { display: grid; gap: var(--s5); position: sticky; top: 84px; }
+.lead-magnet { padding: var(--s6); border-radius: var(--radius-lg); background: var(--teal-deep); color: #fff; }
+.lead-magnet .eyebrow { color: #ffc667; }
+.lead-magnet h2 { margin: 0 0 var(--s2); color: #fff; font-size: 22px; }
+.lead-magnet > p { color: rgba(255,255,255,.82); }
+.lead-magnet label { display: block; margin-top: var(--s3); }
+.lead-magnet label > span { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.lead-magnet input[type="email"], .lead-magnet input[type="text"] { width: 100%; }
+.lead-magnet .consent { display: flex; gap: 10px; align-items: flex-start; }
+.lead-magnet .consent input { width: 20px; min-height: 20px; margin-top: 2px; accent-color: var(--orange); }
+.lead-magnet .consent span { font-size: 13px; font-weight: 500; color: rgba(255,255,255,.82); }
+.lead-magnet .button { width: 100%; margin-top: var(--s4); }
+.lead-magnet .success-state h2, .lead-magnet .success-state p { color: #fff; }
+.lead-magnet .success-state .eyebrow { color: #ffc667; }
+.checklist-cta { padding: var(--s6); border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--paper); }
+.checklist-cta h2 { margin: 0 0 var(--s2); font-size: 20px; }
+.checklist-cta .contact-hooks { margin-top: var(--s4); flex-direction: column; }
+.checklist-cta .contact-hooks .button { width: 100%; }
+
+@media (max-width: 900px) {
+  .checklist-layout { grid-template-columns: 1fr; }
+  .checklist-aside, .checklist-toolbar { position: static; }
+}
+@media (max-width: 560px) {
+  .cl-items-grid { grid-template-columns: 1fr; }
+  .checklist-actions { flex-direction: column; align-items: stretch; }
+  .checklist-actions .button, .checklist-actions .text-button { width: 100%; }
+}
+
+@media print {
+  .site-header, .site-footer, .mobile-actions, .authority-band, .concept-bar, .skip-link,
+  .checklist-aside, .checklist-actions, .breadcrumbs { display: none !important; }
+  .checklist-layout { display: block; }
+  .checklist-toolbar { position: static; box-shadow: none; border: 0; padding: 0; margin-bottom: 16px; }
+  .cl-item { break-inside: avoid; border: 0; padding: 4px 0; }
+  .cl-box { border-color: #333; }
+  .cl-group { break-inside: avoid; }
+  body { background: #fff; }
+  .checklist-hero { padding: 0 0 12px; }
+}
