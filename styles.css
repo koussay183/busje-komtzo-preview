@@ -981,3 +981,81 @@ body.addr-map-open { overflow: hidden; }
 /* Lucide-style service-card icon tile */
 .card-number { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 14px; color: var(--teal-dark); background: var(--teal-soft); }
 .card-number svg { width: 26px; height: 26px; }
+
+/* ================================================================
+   MODERN THEME 2026-09-23 — typography, gradients, depth, rhythm
+   ================================================================ */
+:root {
+  --radius-sm: 12px; --radius: 16px; --radius-lg: 26px;
+  --shadow-xs: 0 1px 2px rgba(8,38,48,.06);
+  --shadow-sm: 0 6px 18px rgba(8,38,48,.09);
+  --shadow-md: 0 16px 40px rgba(8,38,48,.14);
+}
+body { font-family: "Manrope", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif; letter-spacing: -.011em; }
+h1, h2, h3, .h { font-family: "Manrope", "Segoe UI Variable Display", system-ui, sans-serif; font-weight: 800; letter-spacing: -.03em; }
+.eyebrow { font-weight: 800; letter-spacing: .14em; }
+
+/* Header: crisp glass bar */
+.site-header { border-bottom: 1px solid rgba(0,79,98,.10); box-shadow: 0 10px 30px rgba(8,38,48,.06); }
+#site-nav a { border-radius: 10px; }
+#site-nav a:hover { background: var(--teal-soft); border-color: transparent; }
+
+/* Buttons: bolder, softer, with lift */
+.button { border-radius: 14px; font-weight: 800; letter-spacing: -.01em; box-shadow: var(--shadow-xs); }
+.button:hover { transform: translateY(-2px); }
+.button-gold, .header-cta { box-shadow: 0 8px 22px rgba(243,146,0,.30); }
+.button-whatsapp { box-shadow: 0 8px 22px rgba(18,163,80,.28); }
+
+/* Section rhythm — more air */
+.section { padding-block: clamp(56px, 8vw, 108px); }
+
+/* HERO — gradient, larger, glassy USP chips */
+.home-hero { background: linear-gradient(158deg, #00303d 0%, #004f62 58%, #00728a 100%); }
+.home-hero::before { background: linear-gradient(180deg, rgba(0,30,38,.30), rgba(0,30,38,.66)); }
+.home-hero .hero-copy h1 { font-size: clamp(38px, 6.2vw, 60px); line-height: 1.02; }
+.home-hero .hero-copy > .lead { font-size: clamp(17px, 2vw, 20px); color: rgba(255,255,255,.9); }
+.home-hero .eyebrow { color: #ffcf7a; }
+.home-hero .usp-list { gap: 10px 12px; margin-top: var(--s6) !important; }
+.home-hero .usp-list li { align-items: center; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); font-weight: 600; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.home-hero .proof-list li::before { background: #ffcf7a; color: #00303d; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.hero-photo { border-radius: 28px; box-shadow: 0 40px 80px rgba(0,0,0,.4); }
+
+/* Service cards — elevated, animated */
+.service-card { border: 1px solid #e6eef0; border-radius: 22px; box-shadow: var(--shadow-xs); }
+.service-card:hover { transform: translateY(-4px); border-color: #cfe0e3; box-shadow: var(--shadow-md); }
+.service-card a { gap: 6px; }
+.service-card:hover a { color: var(--teal-deep); }
+.card-number { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 16px; color: var(--teal-dark); background: linear-gradient(150deg, var(--teal-soft), #d7ebee); box-shadow: inset 0 0 0 1px rgba(0,79,98,.08); }
+.card-number svg { width: 27px; height: 27px; }
+
+/* Trust band — clean cards */
+.trust-band { background: var(--paper); }
+.trust-grid { gap: var(--s4); }
+.trust-grid > div { padding: 18px 20px; border-radius: 16px; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow-xs); }
+.trust-grid > div strong { color: var(--ink-strong); }
+
+/* Reviews — quote cards */
+.review-google-card { border-radius: 22px; box-shadow: var(--shadow-sm); }
+.reviews-google { background: linear-gradient(180deg, var(--sand, #f4f7f7), #fff); }
+
+/* FAQ — soft cards (reinforce) */
+.faq-list details { border-radius: 16px; box-shadow: var(--shadow-xs); }
+.faq-list details[open] { box-shadow: var(--shadow-sm); }
+
+/* CTA / contact band — gradient */
+.contact-band { background: linear-gradient(140deg, #003f50 0%, #00728a 100%); }
+.contact-band .eyebrow { color: #ffcf7a; }
+
+/* Authority band — lighter */
+.authority-band { background: var(--paper); border-top: 1px solid var(--line); }
+.authority-icon { border-radius: 14px; background: linear-gradient(150deg, var(--teal-soft), #d7ebee); }
+
+/* Forms — modern fields */
+.quote-form.lead-form, .lead-magnet, .checklist-cta, .faq-help { border-radius: 24px; box-shadow: var(--shadow-sm); }
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea, .addr-search-control { border-radius: 12px; }
+input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); }
+
+/* Mobile sticky bar — floating */
+@media (max-width: 1060px) {
+  .mobile-actions { border-radius: 16px 16px 0 0; box-shadow: 0 -10px 30px rgba(8,38,48,.14); }
+}
