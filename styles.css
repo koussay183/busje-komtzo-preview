@@ -1036,7 +1036,9 @@ h1, h2, h3, .h { font-family: "Manrope", "Segoe UI Variable Display", system-ui,
 
 /* Reviews — quote cards */
 .review-google-card { border-radius: 22px; box-shadow: var(--shadow-sm); }
-.reviews-google { background: linear-gradient(180deg, var(--sand, #f4f7f7), #fff); }
+/* Reviews section stays dark teal (white text) — a light bg made the heading invisible.
+   Give it a richer gradient instead of a flat fill. */
+.reviews-google { background: linear-gradient(158deg, #00303d 0%, #004f62 60%, #00697f 100%); }
 
 /* FAQ — soft cards (reinforce) */
 .faq-list details { border-radius: 16px; box-shadow: var(--shadow-xs); }
