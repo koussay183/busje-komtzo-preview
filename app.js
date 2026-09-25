@@ -32,6 +32,18 @@
   const dateField = quoteForm.querySelector('input[type="date"]');
   if (dateField) dateField.min = new Date().toISOString().slice(0, 10);
 
+  // Photo upload: show the chosen files so it feels real (owner receives them at go-live).
+  const photos = quoteForm.querySelector('input[name="photos"]');
+  const photoStatus = quoteForm.querySelector('#photo-status');
+  if (photos && photoStatus) {
+    photos.addEventListener('change', () => {
+      const files = [...(photos.files || [])];
+      photoStatus.textContent = files.length
+        ? `${files.length} foto${files.length === 1 ? '' : "'s"} gekozen: ${files.slice(0, 3).map((f) => f.name).join(', ')}${files.length > 3 ? '…' : ''}`
+        : '';
+    });
+  }
+
   // Prefill the housing/type select from ?service= when linked from a service card.
   const params = new URLSearchParams(location.search);
   const service = params.get('service');

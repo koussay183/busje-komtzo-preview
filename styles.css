@@ -1059,3 +1059,19 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); }
 @media (max-width: 1060px) {
   .mobile-actions { border-radius: 16px 16px 0 0; box-shadow: 0 -10px 30px rgba(8,38,48,.14); }
 }
+
+/* ===== Photo upload + soft privacy note (2026-09-25) ===== */
+.privacy-note { margin: var(--s3) 0 0; color: var(--muted); font-size: 13px; }
+.photo-field { display: grid; gap: 8px; }
+.photo-field-label { font-weight: 700; color: var(--ink-strong); font-size: 15px; }
+.photo-drop { display: flex; align-items: center; gap: var(--s4); padding: 18px 18px; border: 2px dashed var(--line-strong); border-radius: 14px; background: var(--paper); cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+.photo-drop:hover, .photo-drop:focus-within { border-color: var(--teal-dark); background: var(--teal-soft); }
+.photo-drop input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.photo-ico { flex: 0 0 auto; width: 34px; height: 34px; color: var(--teal-dark); }
+.photo-drop-text { display: grid; gap: 2px; }
+.photo-drop-text strong { color: var(--ink-strong); font-size: 15px; }
+.photo-drop-text small { color: var(--muted); font-size: 13px; }
+.photo-status { margin: 0; color: var(--teal-deep); font-size: 13px; font-weight: 700; }
+.photo-status:empty { display: none; }
+.photo-wa { margin: 0; font-size: 13px; color: var(--muted); }
+.photo-wa a { color: var(--teal-dark); font-weight: 700; text-underline-offset: 3px; }

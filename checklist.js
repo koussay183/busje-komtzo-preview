@@ -53,7 +53,6 @@
   if (form) {
     const err = form.querySelector('.form-error');
     const email = form.querySelector('[name="email"]');
-    const consent = form.querySelector('[name="consent"]');
     form.addEventListener('input', (e) => e.target.removeAttribute?.('aria-invalid'));
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -62,11 +61,6 @@
         email.setAttribute('aria-invalid', 'true');
         if (err) { err.textContent = 'Vul een geldig e-mailadres in.'; err.hidden = false; }
         return email.focus();
-      }
-      if (!consent.checked) {
-        consent.setAttribute('aria-invalid', 'true');
-        if (err) { err.textContent = 'Zet een vinkje om de checklist te ontvangen.'; err.hidden = false; }
-        return consent.focus();
       }
       form.innerHTML = '<div class="success-state" role="status"><p class="eyebrow">Gelukt</p>'
         + '<h2>Bedankt! De checklist is onderweg.</h2>'
