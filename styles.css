@@ -1077,3 +1077,43 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); }
 .photo-status:empty { display: none; }
 .photo-wa { margin: 0; font-size: 13px; color: var(--muted); }
 .photo-wa a { color: var(--teal-dark); font-weight: 700; text-underline-offset: 3px; }
+
+/* ================================================================
+   Trust & authority bands — clean icon cards (2026-09-28)
+   ================================================================ */
+.trust-band { background: var(--paper); border-block: 1px solid var(--line); }
+.trust-grid { grid-template-columns: repeat(4, 1fr); gap: var(--s4); padding-block: var(--s6); }
+.trust-grid .trust-item { display: flex; align-items: center; gap: 14px; min-height: 0; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); box-shadow: var(--shadow-xs); }
+.trust-grid .trust-ico { flex: 0 0 auto; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 13px; color: var(--teal-dark); background: linear-gradient(150deg, var(--teal-soft), #d7ebee); }
+.trust-grid .trust-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.trust-grid .trust-item > div { display: grid; gap: 3px; min-width: 0; }
+.trust-grid .trust-item span { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+.trust-grid .trust-item strong { color: var(--ink-strong); font-size: 15px; overflow-wrap: anywhere; }
+
+.authority-band { background: var(--paper); border-top: 1px solid var(--line); }
+.authority-grid { min-height: 0; gap: var(--s4); padding-block: var(--s6); }
+.authority-band .authority-item { padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); box-shadow: var(--shadow-xs); }
+.authority-band .authority-icon { border-radius: 13px; background: linear-gradient(150deg, var(--teal-soft), #d7ebee); }
+.authority-band .authority-item strong { color: var(--ink-strong); font-size: 15px; overflow-wrap: anywhere; }
+.authority-band .authority-item strong a { color: var(--teal-dark); }
+.authority-band .authority-item strong a:hover { color: var(--teal-deep); }
+
+@media (max-width: 900px) { .trust-grid, .authority-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .trust-grid, .authority-grid { grid-template-columns: 1fr; } }
+
+/* ================================================================
+   Algemene voorwaarden (terms) page
+   ================================================================ */
+.terms-shell { max-width: 900px; margin-inline: auto; display: grid; gap: var(--s5); }
+.terms-card { padding: clamp(20px, 3vw, 32px); border: 1px solid var(--line); border-radius: 20px; background: var(--white); box-shadow: var(--shadow-xs); }
+.terms-card-head { display: flex; align-items: center; gap: 14px; margin-bottom: var(--s4); }
+.terms-ico { flex: 0 0 auto; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; color: var(--teal-dark); background: linear-gradient(150deg, var(--teal-soft), #d7ebee); }
+.terms-ico svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.terms-card-head h2 { margin: 0; font-size: 20px; }
+.terms-list { margin: 0; padding-left: 22px; display: grid; gap: 12px; color: #3a5560; }
+.terms-list li { line-height: 1.6; padding-left: 4px; }
+.terms-list li::marker { color: var(--teal-dark); font-weight: 700; }
+.terms-help { margin-top: var(--s3); padding: clamp(22px, 3vw, 32px); border-radius: 20px; background: var(--teal-deep); color: #fff; text-align: center; }
+.terms-help strong { display: block; font-size: 20px; color: #fff; }
+.terms-help p { margin: var(--s2) 0 var(--s4); color: rgba(255,255,255,.82); }
+.terms-help .contact-hooks { justify-content: center; }
