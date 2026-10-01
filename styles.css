@@ -1206,3 +1206,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); }
 .compare-list { margin-top: 0 !important; gap: var(--s3); font-size: 16px; color: var(--ink); }
 @media (max-width: 1060px) { .local-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 820px) { .local-grid, .local-grid-4, .tips-list { grid-template-columns: 1fr; } }
+
+/* ===== WCAG AA contrast for WhatsApp buttons (2026-10-01) =====
+   White on #25d366 is 1.98:1; #0f7d43 is ~5.2:1 and still reads as WhatsApp green. */
+.button-whatsapp { border-color: #0b6a38; background: #0f7d43; color: #fff; }
+.button-whatsapp:hover { border-color: #08552d; background: #0b6a38; color: #fff; }
+.mobile-actions a.wa { border-color: #0b6a38 !important; background: #0f7d43 !important; color: #fff !important; }
