@@ -21,9 +21,83 @@
     });
   }
 
+  // Measurement: one dataLayer event per contact action, read by Google Tag Manager.
+  // Tags in GTM decide what is sent to GA4 / Google Ads, and only with consent.
+  window.dataLayer = window.dataLayer || [];
+  // Admin preview on the live site (?bcz_preview=1) must never count as a real lead or click.
+  const isPreview = document.documentElement.hasAttribute('data-bcz-preview');
+  const track = (data) => { if (!isPreview) window.dataLayer.push(data); };
+  const store = {
+    get: (k) => { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) { /* private mode */ } },
+    del: (k) => { try { sessionStorage.removeItem(k); } catch (e) { /* private mode */ } },
+  };
+
+  const placeOf = (el) => {
+    if (el.closest('.mobile-actions')) return 'sticky_bar';
+    if (el.closest('.site-header')) return 'header';
+    if (el.closest('.site-footer')) return 'footer';
+    if (el.closest('.pack-card')) return 'package_' + (el.closest('.pack-card').id || '').replace('pakket-', '');
+    if (el.closest('.inner-hero, .hero')) return 'hero';
+    if (el.closest('.contact-band')) return 'contact_band';
+    if (el.closest('#quote-form, .success-state')) return 'quote_form';
+    return 'content';
+  };
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    const method = href.startsWith('https://wa.me/') ? 'whatsapp'
+      : href.startsWith('tel:') ? 'phone'
+      : href.startsWith('mailto:') ? 'email' : '';
+    if (!method) return;
+    track({ event: 'bcz_contact', contact_method: method, contact_location: placeOf(link) });
+  });
+
+  // Where the visitor came from (campaign tags only, no click IDs stored), sent with the lead
+  // so the owner can see which enquiries came from Google Ads.
+  const params = new URLSearchParams(location.search);
+  if (!store.get('bcz_src')) {
+    const src = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term']
+      .map((k) => params.get(k) ? `${k.replace('utm_', '')}=${params.get(k).slice(0, 60)}` : '')
+      .filter(Boolean);
+    if (params.has('gclid') || params.has('gbraid') || params.has('wbraid')) src.push('google_ads=ja');
+    store.set('bcz_src', (src.join(', ') || 'direct/organic') + `, landing=${location.pathname}`);
+  }
+
+  // Thank-you page: count the lead once, right after a real submission (not on refresh).
+  if (document.body.classList.contains('page-bedankt') && store.get('bcz_lead_pending')) {
+    let userData = {};
+    try { userData = JSON.parse(store.get('bcz_lead_ud') || '{}'); } catch (e) { userData = {}; }
+    track({ event: 'bcz_lead_success', lead_type: 'quote_form', user_data: userData });
+    store.del('bcz_lead_pending');
+    store.del('bcz_lead_ud');
+  }
+
   // Short lead form (offerte): capture contact fast, no prices or volume required.
   const quoteForm = document.querySelector('#quote-form');
   if (!quoteForm) return;
+
+  const tsField = quoteForm.querySelector('[name="bcz_ts"]');
+  if (tsField) tsField.value = String(Date.now());
+  const srcField = quoteForm.querySelector('[name="bcz_source"]');
+  if (srcField) srcField.value = store.get('bcz_src') || '';
+  let formStarted = false;
+  quoteForm.addEventListener('focusin', () => {
+    if (formStarted) return;
+    formStarted = true;
+    track({ event: 'bcz_form_start', lead_type: 'quote_form' });
+  });
+
+  // Server-side validation errors come back as ?fout=<code>.
+  const serverErrors = {
+    velden: 'Controleer de gemarkeerde velden en probeer het opnieuw.',
+    contact: 'Vul uw telefoonnummer óf e-mailadres in, zodat we u kunnen bereiken.',
+    fotos: "Een of meer foto's konden niet worden verwerkt. Probeer minder of kleinere foto's, of stuur ze via WhatsApp.",
+    groot: "De foto's zijn samen te groot. Probeer minder foto's, of stuur ze via WhatsApp.",
+    druk: 'Er zijn net veel aanvragen verstuurd. Probeer het over een paar minuten opnieuw of bel ons.',
+    mail: 'Uw aanvraag kon niet worden verstuurd. Bel of app ons, dan helpen we u direct.',
+  };
 
   const error = quoteForm.querySelector('.form-error');
   const phone = quoteForm.querySelector('[name="phone"]');
@@ -35,7 +109,7 @@
   // Photos: thumbnails, remove, drag & drop, client-side compression (light uploads)
   // and, on phones, the native share sheet so photos can go straight to WhatsApp.
   // At go-live the form posts as multipart/form-data and the photos are emailed to the owner.
-  const photos = quoteForm.querySelector('input[name="photos"]');
+  const photos = quoteForm.querySelector('input[name="photos[]"]');
   const photoStatus = quoteForm.querySelector('#photo-status');
   const previews = quoteForm.querySelector('#photo-previews');
   const shareBtn = quoteForm.querySelector('#photo-share');
@@ -108,7 +182,6 @@
   });
 
   // Prefill the housing/type select from ?service= when linked from a service card.
-  const params = new URLSearchParams(location.search);
   const service = params.get('service');
   const typeSelect = quoteForm.querySelector('[name="housing-type"]');
   if (service && typeSelect) {
@@ -120,6 +193,18 @@
     if (error) { error.textContent = message; error.hidden = false; }
     if (field) field.focus();
   };
+
+  const serverError = params.get('fout');
+  if (serverError) {
+    // The submission did not go through: no conversion may be counted for it.
+    store.del('bcz_lead_pending');
+    store.del('bcz_lead_ud');
+  }
+  if (serverError && error) {
+    error.textContent = serverErrors[serverError] || serverErrors.velden;
+    error.hidden = false;
+    requestAnimationFrame(() => quoteForm.scrollIntoView({ block: 'start' }));
+  }
 
   quoteForm.addEventListener('input', (event) => {
     if (event.target && event.target.removeAttribute) event.target.removeAttribute('aria-invalid');
@@ -150,6 +235,19 @@
     }
 
     if (quoteForm.dataset.submitMode === 'live') {
+      // For Google Ads enhanced conversions: normalised contact details, used once on the
+      // thank-you page (and only sent on by GTM when the visitor allowed marketing cookies).
+      const ud = {};
+      if (hasEmail) ud.email = email.value.trim().toLowerCase();
+      if (hasPhone) {
+        let digits = phone.value.replace(/[^\d+]/g, '');
+        if (digits.startsWith('00')) digits = '+' + digits.slice(2);
+        else if (digits.startsWith('0')) digits = '+31' + digits.slice(1);
+        ud.phone_number = digits;
+      }
+      store.set('bcz_lead_pending', '1');
+      store.set('bcz_lead_ud', JSON.stringify(ud));
+      track({ event: 'bcz_form_submit', lead_type: 'quote_form', photo_count: picked.length });
       const submit = quoteForm.querySelector('#submit-quote');
       if (submit) { submit.disabled = true; submit.textContent = 'Versturen…'; }
       quoteForm.submit();
@@ -160,7 +258,7 @@
     quoteForm.innerHTML = `<div class="success-state" role="status">`
       + `<p class="eyebrow">Aanvraag ontvangen</p>`
       + `<h2>Bedankt${name ? `, ${name}` : ''}! We nemen snel contact met u op.</h2>`
-      + `<p>Busje komt zo belt of appt u persoonlijk om uw verhuizing door te nemen — vrijblijvend. Sneller schakelen? App of bel ons direct.</p>`
+      + `<p>Busje komt zo belt of appt u persoonlijk om uw verhuizing door te nemen, vrijblijvend. Sneller schakelen? App of bel ons direct.</p>`
       + `<div class="contact-hooks">`
       + `<a class="button button-whatsapp" href="https://wa.me/31634755656?text=Hallo%2C%20ik%20heb%20zojuist%20mijn%20aanvraag%20ingevuld%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a>`
       + `<a class="button" href="tel:+31850508282">Bel 085 050 8282</a>`
