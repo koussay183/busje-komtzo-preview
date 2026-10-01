@@ -32,17 +32,80 @@
   const dateField = quoteForm.querySelector('input[type="date"]');
   if (dateField) dateField.min = new Date().toISOString().slice(0, 10);
 
-  // Photo upload: show the chosen files so it feels real (owner receives them at go-live).
+  // Photos: thumbnails, remove, drag & drop, client-side compression (light uploads)
+  // and, on phones, the native share sheet so photos can go straight to WhatsApp.
+  // At go-live the form posts as multipart/form-data and the photos are emailed to the owner.
   const photos = quoteForm.querySelector('input[name="photos"]');
   const photoStatus = quoteForm.querySelector('#photo-status');
-  if (photos && photoStatus) {
-    photos.addEventListener('change', () => {
-      const files = [...(photos.files || [])];
-      photoStatus.textContent = files.length
-        ? `${files.length} foto${files.length === 1 ? '' : "'s"} gekozen: ${files.slice(0, 3).map((f) => f.name).join(', ')}${files.length > 3 ? '…' : ''}`
-        : '';
-    });
+  const previews = quoteForm.querySelector('#photo-previews');
+  const shareBtn = quoteForm.querySelector('#photo-share');
+  const drop = quoteForm.querySelector('.photo-drop');
+  const MAX_FILES = 10;
+  let picked = [];
+
+  const compress = (file) => new Promise((resolve) => {
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 600 * 1024) { resolve(file); return; }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => resolve(blob && blob.size < file.size
+        ? new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' })
+        : file), 'image/jpeg', 0.82);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+
+  const syncInput = () => {
+    if (!photos || typeof DataTransfer === 'undefined') return;
+    const dt = new DataTransfer();
+    picked.forEach((f) => dt.items.add(f));
+    photos.files = dt.files;
+  };
+
+  const renderPhotos = (note = '') => {
+    if (!previews) return;
+    previews.querySelectorAll('img').forEach((im) => URL.revokeObjectURL(im.src));
+    previews.innerHTML = picked.map((f, i) => `<figure class="photo-thumb"><img src="${URL.createObjectURL(f)}" alt="Foto ${i + 1}">`
+      + `<button type="button" data-remove="${i}" aria-label="Verwijder foto ${i + 1}">×</button></figure>`).join('');
+    if (photoStatus) photoStatus.textContent = picked.length ? `${picked.length} foto${picked.length === 1 ? '' : "'s"} toegevoegd${note}` : '';
+    if (shareBtn) shareBtn.hidden = !(picked.length && navigator.canShare && navigator.canShare({ files: picked }));
+  };
+
+  const addFiles = async (list) => {
+    const incoming = [...(list || [])].filter((f) => f.type.startsWith('image/'));
+    const accepted = incoming.slice(0, Math.max(0, MAX_FILES - picked.length));
+    picked = picked.concat(await Promise.all(accepted.map(compress)));
+    syncInput();
+    renderPhotos(incoming.length > accepted.length ? ` (maximaal ${MAX_FILES})` : '');
+  };
+
+  if (photos) photos.addEventListener('change', () => addFiles(photos.files));
+  previews?.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-remove]');
+    if (!btn) return;
+    picked.splice(Number(btn.dataset.remove), 1);
+    syncInput();
+    renderPhotos();
+  });
+  if (drop) {
+    ['dragenter', 'dragover'].forEach((type) => drop.addEventListener(type, (e) => { e.preventDefault(); drop.classList.add('is-drag'); }));
+    ['dragleave', 'drop'].forEach((type) => drop.addEventListener(type, () => drop.classList.remove('is-drag')));
+    drop.addEventListener('drop', (e) => { e.preventDefault(); addFiles(e.dataTransfer?.files); });
   }
+  shareBtn?.addEventListener('click', () => {
+    navigator.share({
+      files: picked,
+      title: "Foto's voor mijn verhuizing",
+      text: "Hallo Busje komt zo, hierbij foto's van mijn woning voor mijn verhuizing.",
+    }).catch(() => {});
+  });
 
   // Prefill the housing/type select from ?service= when linked from a service card.
   const params = new URLSearchParams(location.search);
