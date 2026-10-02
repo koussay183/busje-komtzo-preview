@@ -73,6 +73,7 @@
     store.del('bcz_lead_pending');
     store.del('bcz_lead_ud');
   }
+  if (document.body.classList.contains('page-bedankt')) store.del('bcz_form_draft');
 
   // Short lead form (offerte): capture contact fast, no prices or volume required.
   const quoteForm = document.querySelector('#quote-form');
@@ -92,14 +93,15 @@
   // Server-side validation errors come back as ?fout=<code>.
   const serverErrors = {
     velden: 'Controleer de gemarkeerde velden en probeer het opnieuw.',
-    contact: 'Vul uw telefoonnummer óf e-mailadres in, zodat we u kunnen bereiken.',
+    contact: 'Vul uw telefoonnummer of e-mailadres in, dan kunnen we u bereiken.',
     fotos: "Een of meer foto's konden niet worden verwerkt. Probeer minder of kleinere foto's, of stuur ze via WhatsApp.",
     groot: "De foto's zijn samen te groot. Probeer minder foto's, of stuur ze via WhatsApp.",
     druk: 'Er zijn net veel aanvragen verstuurd. Probeer het over een paar minuten opnieuw of bel ons.',
     mail: 'Uw aanvraag kon niet worden verstuurd. Bel of app ons, dan helpen we u direct.',
   };
 
-  const error = quoteForm.querySelector('.form-error');
+  const error = quoteForm.querySelector('.form-error:not(.step-error)');
+  const stepError = quoteForm.querySelector('.step-error');
   const phone = quoteForm.querySelector('[name="phone"]');
   const email = quoteForm.querySelector('[name="email"]');
 
@@ -181,13 +183,71 @@
     }).catch(() => {});
   });
 
-  // Prefill the housing/type select from ?service= when linked from a service card.
-  const service = params.get('service');
-  const typeSelect = quoteForm.querySelector('[name="housing-type"]');
-  if (service && typeSelect) {
-    const match = [...typeSelect.options].find((o) => o.value.toLowerCase().includes(service.toLowerCase()));
-    if (match) typeSelect.value = match.value;
+  // Prefill the type of home from ?service= when linked from a service card.
+  const housingRadios = [...quoteForm.querySelectorAll('[name="housing-type"]')];
+  const service = (params.get('service') || '').toLowerCase();
+  if (service) {
+    const wanted = service.startsWith('zakelijk') || service.startsWith('kantoor') ? 'kantoor' : service;
+    const match = housingRadios.find((r) => r.value.toLowerCase().includes(wanted));
+    if (match) match.checked = true;
   }
+
+  // Two steps: an easy first question (no personal data), then contact details.
+  // Without JavaScript both steps simply show as one form.
+  const steps = [...quoteForm.querySelectorAll('.lead-step')];
+  const progressLabel = quoteForm.querySelector('.lead-progress-label');
+  const summary = quoteForm.querySelector('.lead-summary');
+  const showStep = (n, focus = true) => {
+    steps.forEach((st) => { st.hidden = st.dataset.step !== String(n); });
+    quoteForm.dataset.step = String(n);
+    if (progressLabel) progressLabel.innerHTML = n === 1 ? 'Stap <b>1</b> van 2' : 'Stap <b>2</b> van 2 · bijna klaar';
+    if (n === 2 && summary) {
+      const housing = housingRadios.find((r) => r.checked);
+      const timing = quoteForm.querySelector('[name="timing"]:checked');
+      summary.querySelector('span').textContent = [housing && housing.value, timing && timing.value].filter(Boolean).join(' · ');
+      summary.hidden = !housing;
+    }
+    if (focus) {
+      quoteForm.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      const target = n === 2 ? quoteForm.querySelector('[name="name"]') : (housingRadios.find((r) => r.checked) || housingRadios[0]);
+      if (target) setTimeout(() => target.focus({ preventScroll: true }), 250);
+    }
+  };
+  const goToStep2 = () => {
+    if (!housingRadios.some((r) => r.checked)) {
+      if (stepError) { stepError.textContent = 'Kies het type woning om verder te gaan.'; stepError.hidden = false; }
+      housingRadios[0]?.focus();
+      return;
+    }
+    if (stepError) stepError.hidden = true;
+    track({ event: 'bcz_form_step', lead_type: 'quote_form', form_step: 2 });
+    showStep(2);
+  };
+  if (steps.length === 2) {
+    quoteForm.classList.add('is-stepped');
+    showStep(1, false);
+    quoteForm.querySelector('.lead-next')?.addEventListener('click', goToStep2);
+    quoteForm.querySelectorAll('.lead-back').forEach((b) => b.addEventListener('click', () => showStep(1)));
+    housingRadios.forEach((r) => r.addEventListener('change', () => { if (stepError) stepError.hidden = true; }));
+  }
+
+  // Keep what the visitor typed if the server sends them back with an error (?fout=…).
+  const DRAFT_FIELDS = ['name', 'phone', 'email', 'date', 'from-city', 'to-city', 'scope'];
+  const saveDraft = () => {
+    const d = {};
+    DRAFT_FIELDS.forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]`); if (el && el.value) d[n] = el.value; });
+    ['housing-type', 'timing'].forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]:checked`); if (el) d[n] = el.value; });
+    store.set('bcz_form_draft', JSON.stringify(d));
+  };
+  const restoreDraft = () => {
+    let d = {};
+    try { d = JSON.parse(store.get('bcz_form_draft') || '{}'); } catch (e) { d = {}; }
+    DRAFT_FIELDS.forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]`); if (el && d[n]) el.value = d[n]; });
+    ['housing-type', 'timing'].forEach((n) => {
+      const el = [...quoteForm.querySelectorAll(`[name="${n}"]`)].find((r) => r.value === d[n]);
+      if (el) el.checked = true;
+    });
+  };
 
   const showError = (message, field) => {
     if (error) { error.textContent = message; error.hidden = false; }
@@ -201,6 +261,8 @@
     store.del('bcz_lead_ud');
   }
   if (serverError && error) {
+    restoreDraft();
+    if (steps.length === 2) showStep(housingRadios.some((r) => r.checked) ? 2 : 1, false);
     error.textContent = serverErrors[serverError] || serverErrors.velden;
     error.hidden = false;
     requestAnimationFrame(() => quoteForm.scrollIntoView({ block: 'start' }));
@@ -214,12 +276,10 @@
     event.preventDefault();
     if (error) error.hidden = true;
 
-    const requiredInvalid = [...quoteForm.querySelectorAll('[required]')].filter(
-      (f) => (f.type === 'checkbox' ? !f.checked : !f.checkValidity())
-    );
-    if (requiredInvalid.length) {
-      requiredInvalid.forEach((f) => f.setAttribute('aria-invalid', 'true'));
-      return showError('Controleer de gemarkeerde velden.', requiredInvalid[0]);
+    if (!housingRadios.some((r) => r.checked)) {
+      if (steps.length === 2) showStep(1);
+      if (stepError) { stepError.textContent = 'Kies het type woning om verder te gaan.'; stepError.hidden = false; }
+      return;
     }
 
     const hasPhone = phone && phone.value.trim();
@@ -227,11 +287,16 @@
     if (!hasPhone && !hasEmail) {
       phone && phone.setAttribute('aria-invalid', 'true');
       email && email.setAttribute('aria-invalid', 'true');
-      return showError('Vul uw telefoonnummer óf e-mailadres in, zodat we u kunnen bereiken.', phone || email);
+      return showError('Vul uw telefoonnummer of e-mailadres in, dan kunnen we u bereiken.', phone || email);
     }
     if (hasEmail && !email.checkValidity()) {
       email.setAttribute('aria-invalid', 'true');
-      return showError('Controleer uw e-mailadres.', email);
+      return showError('Dit e-mailadres lijkt niet te kloppen. Controleer het even.', email);
+    }
+    const digitCount = hasPhone ? phone.value.replace(/\D/g, '').length : 0;
+    if (hasPhone && (digitCount < 8 || digitCount > 15)) {
+      phone.setAttribute('aria-invalid', 'true');
+      return showError('Dit telefoonnummer lijkt niet te kloppen. Controleer het even.', phone);
     }
 
     if (quoteForm.dataset.submitMode === 'live') {
@@ -245,6 +310,7 @@
         else if (digits.startsWith('0')) digits = '+31' + digits.slice(1);
         ud.phone_number = digits;
       }
+      saveDraft();
       store.set('bcz_lead_pending', '1');
       store.set('bcz_lead_ud', JSON.stringify(ud));
       track({ event: 'bcz_form_submit', lead_type: 'quote_form', photo_count: picked.length });

@@ -1265,3 +1265,130 @@ input:focus, select:focus, textarea:focus { border-color: var(--teal-dark); }
 
 /* WordPress: the redesign has its own WhatsApp buttons; hide the old floating widget if it still renders. */
 #ht-ctc-chat, .ht-ctc-chat { display: none !important; }
+
+/* ================================================================
+   2026-10-02 · Services (8 cards)
+   ================================================================ */
+.services-8 .section-heading .text-link { display: inline-block; margin-top: 6px; font-weight: 760; }
+.svc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 20px); }
+.svc-card { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 24px 22px 20px; border: 1px solid #e3edef; border-radius: 22px; background: var(--white); box-shadow: var(--shadow-xs); transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s var(--ease); }
+.svc-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; border-radius: 22px 22px 0 0; background: linear-gradient(90deg, var(--teal), var(--orange)); opacity: 0; transition: opacity .2s var(--ease); }
+.svc-card:hover { transform: translateY(-4px); border-color: #cfe0e3; box-shadow: var(--shadow-md); }
+.svc-card:hover::before { opacity: 1; }
+.svc-ico { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; margin-bottom: 4px; border-radius: 15px; background: linear-gradient(150deg, var(--teal-soft), #d4eaee); color: var(--teal-dark); transition: background .2s var(--ease), color .2s var(--ease); }
+.svc-ico svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.svc-card:hover .svc-ico { background: var(--teal-dark); color: #fff; }
+.svc-card h3 { margin: 0; font-size: 18px; line-height: 1.25; }
+.svc-card h3 a { color: var(--ink-strong); text-decoration: none; }
+.svc-card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: 22px; }
+.svc-card p { margin: 0; flex: 1; color: #4a6770; font-size: 15px; line-height: 1.55; }
+.svc-link { position: relative; z-index: 1; align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 2px; color: var(--teal-dark); font-size: 14.5px; font-weight: 780; text-decoration: none; }
+.svc-link span { transition: transform .2s var(--ease); }
+.svc-card:hover .svc-link span { transform: translateX(4px); }
+.svc-link[href^="tel:"] { color: var(--orange-dark); }
+@media (max-width: 1080px) { .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .svc-grid { grid-template-columns: 1fr; gap: 10px; }
+  .svc-card { display: grid; grid-template-columns: 46px 1fr; column-gap: 14px; row-gap: 4px; padding: 16px; border-radius: 18px; }
+  .svc-card::before { display: none; }
+  .svc-ico { grid-row: 1 / span 3; width: 46px; height: 46px; margin: 0; border-radius: 13px; }
+  .svc-card h3 { font-size: 17px; }
+  .svc-card p { font-size: 14.5px; }
+  .svc-link { min-height: 36px; }
+}
+
+/* ================================================================
+   2026-10-02 · Google + Trustoo with their real logos
+   ================================================================ */
+.review-platforms { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+.platform-card { display: grid; gap: 6px; min-width: 210px; padding: 16px 20px 14px; border-radius: 18px; background: #fff; color: var(--ink-strong); text-decoration: none; box-shadow: 0 10px 30px rgba(0, 20, 28, .25); transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.platform-card:hover { transform: translateY(-3px); box-shadow: 0 16px 38px rgba(0, 20, 28, .32); }
+.platform-logo { display: block; height: 26px; width: auto; }
+.platform-score { display: flex; align-items: baseline; gap: 6px; }
+.platform-score strong { font-size: 30px; line-height: 1; letter-spacing: -.02em; color: var(--ink-strong); }
+.platform-score em { margin-left: -4px; color: var(--muted); font-style: normal; font-weight: 700; }
+.platform-card small { color: #4a6770; font-size: 13px; font-weight: 600; }
+.stars { color: #f5a623; font-size: 16px; letter-spacing: 1px; }
+.authority-band .authority-item.is-platform { grid-template-columns: 1fr; gap: 6px; align-content: center; }
+.authority-logo { display: block; height: 22px; width: auto; }
+.authority-band .authority-item.is-platform span { margin: 0; }
+.star-ico { color: #f5a623; font-weight: 400; }
+
+/* ================================================================
+   2026-10-02 · Two-step quote form
+   ================================================================ */
+.lead-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.lead-progress-bar { flex: 1; height: 8px; border-radius: 99px; background: var(--teal-soft); overflow: hidden; }
+.lead-progress-bar i { display: block; width: 50%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--teal), var(--orange)); transition: width .45s var(--ease); }
+.quote-form[data-step="2"] .lead-progress-bar i { width: 92%; }
+.lead-progress-label { color: var(--muted); font-size: 13.5px; font-weight: 700; white-space: nowrap; }
+.lead-progress-label b { color: var(--ink-strong); }
+.quote-form:not(.is-stepped) .lead-progress { display: none; }
+.lead-step { min-width: 0; margin: 0; padding: 0; border: 0; }
+.lead-step + .lead-step { margin-top: 28px; }
+.quote-form.is-stepped .lead-step + .lead-step { margin-top: 0; }
+.lead-step[hidden] { display: none !important; }
+.lead-step-title { margin: 0 0 6px; padding: 0; color: var(--ink-strong); font-size: clamp(23px, 3.2vw, 30px); font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+.lead-step-sub { margin: 0 0 18px; color: var(--muted); }
+.home-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.choice-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 104px; padding: 14px 10px; border: 1.5px solid var(--line); border-radius: 16px; background: #fff; text-align: center; cursor: pointer; transition: border-color .15s, box-shadow .15s, background .15s, transform .15s; }
+.choice-tile:hover { border-color: var(--line-strong); transform: translateY(-1px); }
+.choice-tile input { position: absolute; opacity: 0; pointer-events: none; }
+.choice-ico { display: flex; color: var(--teal-dark); }
+.choice-ico svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.choice-text { color: var(--ink-strong); font-size: 14.5px; font-weight: 700; line-height: 1.25; }
+.choice-tile:has(input:checked) { border-color: var(--teal); background: #f1f9fa; box-shadow: 0 0 0 3px rgba(0, 107, 128, .16); }
+.choice-tile:has(input:checked)::after { content: "\2713"; position: absolute; top: 8px; right: 10px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 13px; font-weight: 800; }
+.choice-tile:has(input:focus-visible), .chip:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 2px; }
+.lead-q { margin: 22px 0 10px; color: var(--ink-strong); font-weight: 760; }
+.lead-q em { color: var(--muted); font-style: normal; font-weight: 500; font-size: .9em; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; cursor: pointer; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip span { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px; border: 1.5px solid var(--line); border-radius: 99px; background: #fff; color: var(--ink); font-size: 14.5px; font-weight: 650; transition: all .15s; }
+.chip:hover span { border-color: var(--line-strong); }
+.chip:has(input:checked) span { border-color: var(--teal); background: var(--teal); color: #fff; }
+.lead-step .form-actions { margin-top: 22px; }
+.lead-step .form-actions .button { min-height: 54px; padding-inline: 28px; font-size: 16.5px; }
+.lead-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 4px 0 12px; padding: 10px 14px; border-radius: 12px; background: var(--teal-soft); color: var(--teal-deep); font-weight: 700; font-size: 14.5px; }
+.lead-summary[hidden] { display: none; }
+.lead-back { border: 0; background: none; color: var(--teal-dark); font: inherit; font-size: 14px; font-weight: 760; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 6px 0; }
+.lead-back-link { display: block; margin: 14px auto 0; }
+.quote-form:not(.is-stepped) .lead-back, .quote-form:not(.is-stepped) [data-step="1"] .form-actions, .quote-form:not(.is-stepped) [data-step="1"] .lead-proof { display: none; }
+.lead-more { border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+.lead-more summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; padding: 14px 16px; cursor: pointer; list-style: none; }
+.lead-more summary::-webkit-details-marker { display: none; }
+.lead-more summary::after { content: "+"; margin-left: auto; color: var(--teal-dark); font-size: 20px; font-weight: 700; line-height: 1; }
+.lead-more[open] summary::after { content: "\2212"; }
+.lead-more summary em { color: var(--muted); font-style: normal; font-size: 14px; }
+.lead-more summary small { flex-basis: 100%; color: var(--muted); font-size: 13.5px; }
+.lead-more-body { display: grid; gap: var(--s4); padding: 0 16px 16px; }
+.lead-proof { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.lead-proof a { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-strong); text-decoration: none; font-size: 14px; }
+.lead-proof img { height: 17px; width: auto; }
+.lead-proof strong { font-size: 15px; }
+.lead-proof .stars { font-size: 13px; }
+.lead-proof small { color: var(--muted); font-size: 12.5px; }
+@media (max-width: 760px) {
+  .home-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .choice-tile:last-child { grid-column: 1 / -1; min-height: 64px; flex-direction: row; }
+  .choice-tile { min-height: 92px; }
+  .lead-step .form-actions .button { width: 100%; }
+  .chip span { padding: 8px 14px; font-size: 14px; }
+}
+.review-platforms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 480px; }
+.platform-card { min-width: 0; padding: 14px 16px 12px; }
+@media (max-width: 380px) { .platform-score strong { font-size: 26px; } .platform-card small { font-size: 12px; } }
+.rg-src-logo { display: inline-block; height: 11px; width: auto; margin-right: 2px; vertical-align: -1px; }
+.card-number:has(.rg-src-logo) { width: auto !important; padding: 0 14px; background: #fff !important; border: 1px solid var(--line); }
+.card-number .rg-src-logo { height: 15px; margin: 0; }
+@media (min-width: 761px) { .home-tiles .choice-tile:last-child { grid-column: span 2; flex-direction: row; } }
+.lead-step .form-actions { display: block; }
+.lead-step .form-actions .button { width: 100%; justify-content: center; }
+.quote-form .choice-tile, .quote-form .chip { margin: 0; }
+@media (max-width: 640px) {
+  .svc-card { padding: 14px 16px; }
+  .svc-card .svc-link:not([href^="tel:"]) { display: none; }
+  .svc-card h3 a::before { content: "\203A"; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--teal-dark); font-size: 26px; font-weight: 400; }
+  .svc-card h3, .svc-card p { padding-right: 18px; }
+}
