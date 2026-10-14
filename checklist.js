@@ -1,6 +1,6 @@
-/* Interactive verhuischecklist: check/uncheck tasks, live progress %, print/PDF,
- * per-device persistence, and a simple email lead-magnet. No data is transmitted;
- * progress is saved only in this browser (localStorage, wrapped in try/catch). */
+/* Interactive verhuischecklist: check/uncheck tasks, live progress %, print/PDF
+ * and per-device persistence. No data is transmitted; progress is saved only in
+ * this browser (localStorage, wrapped in try/catch). */
 (() => {
   const root = document.getElementById('checklist');
   if (!root) return;
@@ -47,27 +47,4 @@
     boxes.forEach((b) => { b.checked = false; markItem(b); });
     update();
   });
-
-  // Lead-magnet email form (design concept: nothing is sent).
-  const form = document.getElementById('cl-form');
-  if (form) {
-    const err = form.querySelector('.form-error');
-    const email = form.querySelector('[name="email"]');
-    form.addEventListener('input', (e) => e.target.removeAttribute?.('aria-invalid'));
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (err) err.hidden = true;
-      if (!email.value.trim() || !email.checkValidity()) {
-        email.setAttribute('aria-invalid', 'true');
-        if (err) { err.textContent = 'Vul een geldig e-mailadres in.'; err.hidden = false; }
-        return email.focus();
-      }
-      form.innerHTML = '<div class="success-state" role="status"><p class="eyebrow">Gelukt</p>'
-        + '<h2>Bedankt! De checklist is onderweg.</h2>'
-        + '<p>U ontvangt de verhuischecklist per e-mail. Wilt u alvast uw verhuizing bespreken? App of bel ons gerust.</p>'
-        + '<div class="contact-hooks"><a class="button button-whatsapp" href="https://wa.me/31634755656?text=Hallo%2C%20ik%20heb%20de%20verhuischecklist%20aangevraagd%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a>'
-        + '<a class="button" href="tel:+31850508282">Bel 085 050 8282</a></div>'
-        + '<p class="prototype-note">Ontwerpconcept: deze versie verzendt nog geen gegevens.</p></div>';
-    });
-  }
 })();

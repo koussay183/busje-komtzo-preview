@@ -25,7 +25,9 @@
   const dimensionStatus = document.querySelector('#m3-dimension-status');
   const decimal = new Intl.NumberFormat('nl-NL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const precise = new Intl.NumberFormat('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/bcz-icons.svg?v=20260923-seo30#${name}"></use></svg>`;
+  // B3: take the sprite URL from the page itself (absolute on WordPress, versioned with the build).
+  const sprite = (document.querySelector('use[href*="bcz-icons.svg"]')?.getAttribute('href') || 'assets/bcz-icons.svg').split('#')[0];
+  const icon = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="${sprite}#${name}"></use></svg>`;
   const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
 
   inventory.innerHTML = data.map((group, groupIndex) => `
