@@ -9,6 +9,9 @@
     };
     menuButton.addEventListener('click', () => {
       const opening = !nav.classList.contains('open');
+      // The mobile menu is fixed right under the header, whatever its current height.
+      const siteHeader = document.querySelector('.site-header');
+      if (opening && siteHeader) document.documentElement.style.setProperty('--hdr', `${Math.round(siteHeader.getBoundingClientRect().bottom)}px`);
       nav.classList.toggle('open', opening);
       menuButton.setAttribute('aria-expanded', String(opening));
       document.body.classList.toggle('menu-open', opening);
@@ -19,6 +22,58 @@
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') close();
     });
+  }
+
+  // Touch screens wide enough for the desktop menu cannot hover: the first tap on
+  // "Diensten" opens its submenu, a second tap follows the link.
+  const touchWide = window.matchMedia('(hover: none) and (min-width: 1061px)');
+  document.querySelectorAll('.nav-item.has-sub').forEach((item) => {
+    item.querySelector(':scope > a')?.addEventListener('click', (event) => {
+      if (!touchWide.matches || item.classList.contains('is-open')) return;
+      event.preventDefault();
+      item.classList.add('is-open');
+    });
+  });
+  document.addEventListener('click', (event) => {
+    document.querySelectorAll('.nav-item.is-open').forEach((item) => {
+      if (!item.contains(event.target)) item.classList.remove('is-open');
+    });
+  });
+
+  // Header gets a firmer edge once the page scrolls.
+  const header = document.querySelector('.site-header');
+  if (header) {
+    const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // Video band: the muted loop only plays while visible (never for reduced motion);
+  // the play button opens the full clip in a dialog.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const loop = document.querySelector('.video-loop');
+  if (loop && !reduceMotion && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) loop.play().catch(() => {});
+        else loop.pause();
+      });
+    }, { threshold: 0.25 }).observe(loop);
+  }
+  const modal = document.querySelector('#video-modal');
+  const playBtn = document.querySelector('.video-play');
+  if (modal && playBtn && typeof modal.showModal === 'function') {
+    const film = modal.querySelector('video');
+    const closeModal = () => { if (film) film.pause(); if (modal.open) modal.close(); };
+    playBtn.addEventListener('click', () => {
+      modal.showModal();
+      if (film) film.play().catch(() => {});
+    });
+    modal.querySelector('.video-close')?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+    modal.addEventListener('close', () => { if (film) film.pause(); });
+  } else if (playBtn) {
+    playBtn.hidden = true;
   }
 
   // Measurement: one dataLayer event per contact action, read by Google Tag Manager.
@@ -183,13 +238,24 @@
     }).catch(() => {});
   });
 
-  // Prefill the type of home from ?service= when linked from a service card.
+  // Prefill the type of home from ?service= when linked from a service card or the
+  // homepage quick-start card (which already answered step 1, so it adds &stap=2).
   const housingRadios = [...quoteForm.querySelectorAll('[name="housing-type"]')];
   const service = (params.get('service') || '').toLowerCase();
+  let prefilled = false;
   if (service) {
     const wanted = service.startsWith('zakelijk') || service.startsWith('kantoor') ? 'kantoor' : service;
     const match = housingRadios.find((r) => r.value.toLowerCase().includes(wanted));
-    if (match) match.checked = true;
+    if (match) { match.checked = true; prefilled = true; }
+  }
+
+  // Coming from the m³ calculator (?volume=12.5): note the estimate in the optional details.
+  const volume = (params.get('volume') || '').replace(',', '.');
+  const scopeField = quoteForm.querySelector('[name="scope"]');
+  if (/^\d{1,3}(\.\d{1,2})?$/.test(volume) && scopeField && !scopeField.value) {
+    scopeField.value = `Geschat verhuisvolume: ${volume.replace('.', ',')} m³ (via de m³ calculator)`;
+    const more = scopeField.closest('details');
+    if (more) more.open = true;
   }
 
   // Two steps: an easy first question (no personal data), then contact details.
@@ -229,6 +295,10 @@
     quoteForm.querySelector('.lead-next')?.addEventListener('click', goToStep2);
     quoteForm.querySelectorAll('.lead-back').forEach((b) => b.addEventListener('click', () => showStep(1)));
     housingRadios.forEach((r) => r.addEventListener('change', () => { if (stepError) stepError.hidden = true; }));
+    if (prefilled && params.get('stap') === '2' && !params.get('fout')) {
+      track({ event: 'bcz_form_step', lead_type: 'quote_form', form_step: 2 });
+      showStep(2, false);
+    }
   }
 
   // Keep what the visitor typed if the server sends them back with an error (?fout=…).

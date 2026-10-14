@@ -6,6 +6,7 @@
   const inventory = calculator.querySelector('#m3-inventory-categories');
   const extra = calculator.querySelector('#m3-extra-volume');
   const total = calculator.querySelector('#m3-total');
+  const miniTotal = document.querySelector('#m3-mini-total');
   const selected = calculator.querySelector('#m3-selected');
   const boxes = calculator.querySelector('#m3-box-equivalent');
   const selectionList = calculator.querySelector('#m3-selection-list');
@@ -83,6 +84,7 @@
     });
     const rounded = Math.round(volume * 10) / 10;
     total.textContent = `${decimal.format(rounded)} m³`;
+    if (miniTotal) miniTotal.textContent = total.textContent;
     selected.textContent = itemCount ? `${itemCount} item${itemCount === 1 ? '' : 's'} geselecteerd` : 'Nog geen items geselecteerd';
     boxes.textContent = rounded ? `ongeveer ${Math.round(rounded / .1)} standaard verhuisdozen` : 'ongeveer 10 standaard verhuisdozen per m³';
     const extraVolume = clamp(extra.value, 0, 200);
