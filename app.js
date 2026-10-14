@@ -1,27 +1,45 @@
 (() => {
   const menuButton = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#site-nav');
+  const menuOpen = () => !!nav && nav.classList.contains('open');
   if (menuButton && nav) {
+    // H5 (WCAG 2.4.3): while the menu is open the page behind it is inert, so Tab stays in the header,
+    // the menu and the bottom bar. Closing returns focus to the menu button.
+    const behind = () => document.querySelectorAll('main, .authority-band, .site-footer');
     const close = () => {
+      const wasOpen = menuOpen();
       nav.classList.remove('open');
       menuButton.setAttribute('aria-expanded', 'false');
       document.body.classList.remove('menu-open');
+      behind().forEach((el) => el.removeAttribute('inert'));
+      if (wasOpen && nav.contains(document.activeElement)) menuButton.focus();
     };
     menuButton.addEventListener('click', () => {
-      const opening = !nav.classList.contains('open');
+      const opening = !menuOpen();
+      if (!opening) { close(); return; }
       // The mobile menu is fixed right under the header, whatever its current height.
       const siteHeader = document.querySelector('.site-header');
-      if (opening && siteHeader) document.documentElement.style.setProperty('--hdr', `${Math.round(siteHeader.getBoundingClientRect().bottom)}px`);
-      nav.classList.toggle('open', opening);
-      menuButton.setAttribute('aria-expanded', String(opening));
-      document.body.classList.toggle('menu-open', opening);
+      if (siteHeader) document.documentElement.style.setProperty('--hdr', `${Math.round(siteHeader.getBoundingClientRect().bottom)}px`);
+      nav.classList.add('open');
+      menuButton.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+      behind().forEach((el) => el.setAttribute('inert', ''));
+      requestAnimationFrame(() => nav.querySelector('a')?.focus());
     });
     nav.addEventListener('click', (event) => {
       if (event.target.closest('a')) close();
     });
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') close();
+    // The bottom bar stays usable while the menu is open: a tap there also closes the menu.
+    document.querySelector('.mobile-actions')?.addEventListener('click', (event) => {
+      if (event.target.closest('a')) close();
     });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menuOpen()) close();
+    });
+    // Rotating or resizing to the desktop layout hides the button: never leave the page inert.
+    const desktop = window.matchMedia('(min-width: 1061px)');
+    const onDesktop = () => { if (desktop.matches && menuOpen()) close(); };
+    if (desktop.addEventListener) desktop.addEventListener('change', onDesktop);
   }
 
   // Touch screens wide enough for the desktop menu cannot hover: the first tap on
@@ -33,12 +51,61 @@
       event.preventDefault();
       item.classList.add('is-open');
     });
+    // M-A2 (1.4.13): Escape hides the open desktop submenu; it comes back once the pointer or focus has left.
+    item.addEventListener('mouseleave', () => item.classList.remove('is-dismissed'));
+    item.addEventListener('focusout', (event) => {
+      if (!item.contains(event.relatedTarget)) item.classList.remove('is-dismissed');
+    });
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape' || menuOpen()) return;
+    document.querySelectorAll('.nav-item.has-sub').forEach((item) => {
+      if (!item.matches(':hover, :focus-within, .is-open')) return;
+      const hadFocus = item.contains(document.activeElement);
+      item.classList.remove('is-open');
+      item.classList.add('is-dismissed');
+      if (hadFocus) item.querySelector(':scope > a')?.focus();
+    });
   });
   document.addEventListener('click', (event) => {
     document.querySelectorAll('.nav-item.is-open').forEach((item) => {
       if (!item.contains(event.target)) item.classList.remove('is-open');
     });
   });
+
+  // H6 (WCAG 2.2.2): the reviews marquee can be paused with a button (it already pauses on hover/focus).
+  // The button ships hidden (no use without JavaScript); CSS keeps it hidden where the marquee does not run.
+  document.querySelectorAll('.reel-toggle').forEach((button) => {
+    const reel = button.nextElementSibling && button.nextElementSibling.classList.contains('reviews-reel')
+      ? button.nextElementSibling : document.querySelector('.reviews-reel');
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const paused = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(paused));
+      if (reel) reel.classList.toggle('is-paused', paused);
+    });
+  });
+
+  // While a text field has focus the bottom bar steps aside (CSS: body.is-typing), so it never covers
+  // the field above the keyboard. The class goes 0.4s after the field loses focus: a tap that blurs the
+  // field (for example on the form's own button) still lands where the finger was.
+  const typingField = (el) => !!el && typeof el.matches === 'function'
+    && el.matches('textarea, select, input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="range"]):not([type="file"]):not([type="hidden"])');
+  let typingTimer = 0;
+  const typingCheck = () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+      if (!typingField(document.activeElement)) document.body.classList.remove('is-typing');
+    }, 400);
+  };
+  document.addEventListener('focusin', (event) => {
+    if (!typingField(event.target)) return;
+    clearTimeout(typingTimer);
+    document.body.classList.add('is-typing');
+  });
+  document.addEventListener('focusout', (event) => { if (typingField(event.target)) typingCheck(); });
+  // A form that replaces its fields on submit removes the focused field without a focusout.
+  document.addEventListener('submit', typingCheck, true);
 
   // Header gets a firmer edge once the page scrolls.
   const header = document.querySelector('.site-header');
@@ -52,10 +119,43 @@
   // the play button opens the full clip in a dialog.
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const loop = document.querySelector('.video-loop');
-  if (loop && !reduceMotion && 'IntersectionObserver' in window) {
+  // Phones and tablets get the 640x360 loop and poster (about a quarter of the bytes); swapped before
+  // anything loads (preload="none", lazy poster).
+  if (loop && window.matchMedia('(max-width: 820px)').matches) {
+    if (loop.dataset.smallSrc) loop.src = loop.dataset.smallSrc;
+    if (loop.dataset.smallPoster) loop.dataset.poster = loop.dataset.smallPoster;
+  }
+  // Posters load only when the video comes near the viewport (keeps the first load light).
+  const lazyPosters = [...document.querySelectorAll('video[data-poster]')];
+  const showPoster = (v) => { if (!v.poster) v.poster = v.dataset.poster; };
+  if ('IntersectionObserver' in window) {
+    const posterIo = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => { if (entry.isIntersecting) { showPoster(entry.target); posterIo.unobserve(entry.target); } });
+    }, { rootMargin: '600px 0px' });
+    lazyPosters.filter((v) => !v.closest('dialog')).forEach((v) => posterIo.observe(v));
+  } else {
+    lazyPosters.forEach(showPoster);
+  }
+  // H7 (WCAG 2.2.2): the loop has a pause button. Save-Data starts paused (the button then plays it).
+  const loopToggle = document.querySelector('.loop-toggle');
+  const canLoop = !!loop && !reduceMotion && 'IntersectionObserver' in window;
+  let userPaused = !!(navigator.connection && navigator.connection.saveData);
+  let loopVisible = false;
+  if (loopToggle) {
+    loopToggle.hidden = !canLoop;
+    loopToggle.setAttribute('aria-pressed', String(userPaused));
+    loopToggle.addEventListener('click', () => {
+      userPaused = !userPaused;
+      loopToggle.setAttribute('aria-pressed', String(userPaused));
+      if (userPaused) loop.pause();
+      else if (loopVisible) loop.play().catch(() => {});
+    });
+  }
+  if (canLoop) {
     new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) loop.play().catch(() => {});
+        loopVisible = entry.isIntersecting;
+        if (entry.isIntersecting && !userPaused) loop.play().catch(() => {});
         else loop.pause();
       });
     }, { threshold: 0.25 }).observe(loop);
@@ -66,6 +166,7 @@
     const film = modal.querySelector('video');
     const closeModal = () => { if (film) film.pause(); if (modal.open) modal.close(); };
     playBtn.addEventListener('click', () => {
+      if (film) showPoster(film);
       modal.showModal();
       if (film) film.play().catch(() => {});
     });
@@ -92,8 +193,7 @@
     if (el.closest('.mobile-actions')) return 'sticky_bar';
     if (el.closest('.site-header')) return 'header';
     if (el.closest('.site-footer')) return 'footer';
-    if (el.closest('.pack-card')) return 'package_' + (el.closest('.pack-card').id || '').replace('pakket-', '');
-    if (el.closest('.inner-hero, .hero')) return 'hero';
+    if (el.closest('.inner-hero, .hero, .service-hero, .clear-hero, .quote-hero')) return 'hero';
     if (el.closest('.contact-band')) return 'contact_band';
     if (el.closest('#quote-form, .success-state')) return 'quote_form';
     return 'content';
@@ -120,15 +220,18 @@
     store.set('bcz_src', (src.join(', ') || 'direct/organic') + `, landing=${location.pathname}`);
   }
 
-  // Thank-you page: count the lead once, right after a real submission (not on refresh).
-  if (document.body.classList.contains('page-bedankt') && store.get('bcz_lead_pending')) {
-    let userData = {};
-    try { userData = JSON.parse(store.get('bcz_lead_ud') || '{}'); } catch (e) { userData = {}; }
-    track({ event: 'bcz_lead_success', lead_type: 'quote_form', user_data: userData });
+  // Thank-you page: count the lead once, right after a real submission (not on refresh). The server adds
+  // ?s=0 when it dropped the post (honeypot or too fast): that is never counted (H1).
+  if (document.body.classList.contains('page-bedankt')) {
+    if (store.get('bcz_lead_pending') && params.get('s') !== '0') {
+      let userData = {};
+      try { userData = JSON.parse(store.get('bcz_lead_ud') || '{}'); } catch (e) { userData = {}; }
+      track({ event: 'bcz_lead_success', lead_type: 'quote_form', user_data: userData });
+    }
     store.del('bcz_lead_pending');
     store.del('bcz_lead_ud');
+    store.del('bcz_form_draft');
   }
-  if (document.body.classList.contains('page-bedankt')) store.del('bcz_form_draft');
 
   // Short lead form (offerte): capture contact fast, no prices or volume required.
   const quoteForm = document.querySelector('#quote-form');
@@ -138,12 +241,15 @@
   if (tsField) tsField.value = String(Date.now());
   const srcField = quoteForm.querySelector('[name="bcz_source"]');
   if (srcField) srcField.value = store.get('bcz_src') || '';
+  // Funnel: bcz_form_start always comes first (also on a tap or a keyboard-free change, and before the
+  // step event of a deep link that opens step 2).
   let formStarted = false;
-  quoteForm.addEventListener('focusin', () => {
+  const startForm = () => {
     if (formStarted) return;
     formStarted = true;
     track({ event: 'bcz_form_start', lead_type: 'quote_form' });
-  });
+  };
+  ['focusin', 'pointerdown', 'change'].forEach((type) => quoteForm.addEventListener(type, startForm));
 
   // Server-side validation errors come back as ?fout=<code>.
   const serverErrors = {
@@ -155,8 +261,10 @@
     mail: 'Uw aanvraag kon niet worden verstuurd. Bel of app ons, dan helpen we u direct.',
   };
 
-  const error = quoteForm.querySelector('.form-error:not(.step-error)');
+  const error = quoteForm.querySelector('.form-error:not(.step-error):not(.server-error)');
   const stepError = quoteForm.querySelector('.step-error');
+  // Server errors get their own alert above both steps, so it is visible whichever step is shown.
+  const serverBox = quoteForm.querySelector('.server-error') || error;
   const phone = quoteForm.querySelector('[name="phone"]');
   const email = quoteForm.querySelector('[name="email"]');
 
@@ -249,6 +357,32 @@
     if (match) { match.checked = true; prefilled = true; }
   }
 
+  // "Plan een bezichtiging" links (?bezichtiging=ja) preselect the home visit.
+  if (params.get('bezichtiging')) {
+    const visit = quoteForm.querySelector('[name="pricing"][value="Bezichtiging aan huis"]');
+    if (visit) visit.checked = true;
+  }
+
+  // With "Bezichtiging aan huis" chosen, the heading, the step 2 intro and the button talk about the visit.
+  const pageTitle = document.querySelector('main h1');
+  const step2Intro = quoteForm.querySelector('[data-step="2"] .lead-step-sub');
+  const submitButton = quoteForm.querySelector('#submit-quote');
+  const generic = {
+    title: pageTitle ? pageTitle.innerHTML : '',
+    intro: step2Intro ? step2Intro.textContent : '',
+    button: submitButton ? submitButton.textContent : '',
+  };
+  const wantsVisit = () => (quoteForm.querySelector('[name="pricing"]:checked') || {}).value === 'Bezichtiging aan huis';
+  const submitLabel = () => (wantsVisit() ? 'Vraag de bezichtiging aan' : generic.button);
+  const visitCopy = () => {
+    const visit = wantsVisit();
+    if (pageTitle) pageTitle.innerHTML = visit ? 'Plan een bezichtiging aan huis.' : generic.title;
+    if (step2Intro) step2Intro.textContent = visit ? 'De eigenaar belt of appt u om een moment voor de bezichtiging af te spreken. Vrijblijvend.' : generic.intro;
+    if (submitButton && !submitButton.disabled) submitButton.textContent = submitLabel();
+  };
+  quoteForm.querySelectorAll('[name="pricing"]').forEach((r) => r.addEventListener('change', visitCopy));
+  visitCopy();
+
   // Coming from the m³ calculator (?volume=12.5): note the estimate in the optional details.
   const volume = (params.get('volume') || '').replace(',', '.');
   const scopeField = quoteForm.querySelector('[name="scope"]');
@@ -270,7 +404,8 @@
     if (n === 2 && summary) {
       const housing = housingRadios.find((r) => r.checked);
       const timing = quoteForm.querySelector('[name="timing"]:checked');
-      summary.querySelector('span').textContent = [housing && housing.value, timing && timing.value].filter(Boolean).join(' · ');
+      const pricing = quoteForm.querySelector('[name="pricing"]:checked');
+      summary.querySelector('span').textContent = [housing && housing.value, timing && timing.value, pricing && pricing.value].filter(Boolean).join(' · ');
       summary.hidden = !housing;
     }
     if (focus) {
@@ -296,6 +431,7 @@
     quoteForm.querySelectorAll('.lead-back').forEach((b) => b.addEventListener('click', () => showStep(1)));
     housingRadios.forEach((r) => r.addEventListener('change', () => { if (stepError) stepError.hidden = true; }));
     if (prefilled && params.get('stap') === '2' && !params.get('fout')) {
+      startForm();
       track({ event: 'bcz_form_step', lead_type: 'quote_form', form_step: 2 });
       showStep(2, false);
     }
@@ -306,14 +442,14 @@
   const saveDraft = () => {
     const d = {};
     DRAFT_FIELDS.forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]`); if (el && el.value) d[n] = el.value; });
-    ['housing-type', 'timing'].forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]:checked`); if (el) d[n] = el.value; });
+    ['housing-type', 'timing', 'pricing'].forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]:checked`); if (el) d[n] = el.value; });
     store.set('bcz_form_draft', JSON.stringify(d));
   };
   const restoreDraft = () => {
     let d = {};
     try { d = JSON.parse(store.get('bcz_form_draft') || '{}'); } catch (e) { d = {}; }
     DRAFT_FIELDS.forEach((n) => { const el = quoteForm.querySelector(`[name="${n}"]`); if (el && d[n]) el.value = d[n]; });
-    ['housing-type', 'timing'].forEach((n) => {
+    ['housing-type', 'timing', 'pricing'].forEach((n) => {
       const el = [...quoteForm.querySelectorAll(`[name="${n}"]`)].find((r) => r.value === d[n]);
       if (el) el.checked = true;
     });
@@ -330,21 +466,41 @@
     store.del('bcz_lead_pending');
     store.del('bcz_lead_ud');
   }
-  if (serverError && error) {
+  if (serverError && serverBox) {
     restoreDraft();
+    visitCopy();
     if (steps.length === 2) showStep(housingRadios.some((r) => r.checked) ? 2 : 1, false);
-    error.textContent = serverErrors[serverError] || serverErrors.velden;
-    error.hidden = false;
-    requestAnimationFrame(() => quoteForm.scrollIntoView({ block: 'start' }));
+    serverBox.textContent = serverErrors[serverError] || serverErrors.velden;
+    serverBox.hidden = false;
+    if (serverError === 'contact') {
+      if (phone) phone.setAttribute('aria-invalid', 'true');
+      if (email) email.setAttribute('aria-invalid', 'true');
+    }
+    // Announce and focus the message (it is a role="alert" region with tabindex="-1").
+    serverBox.tabIndex = -1;
+    requestAnimationFrame(() => {
+      quoteForm.scrollIntoView({ block: 'start' });
+      serverBox.focus({ preventScroll: true });
+    });
   }
 
   quoteForm.addEventListener('input', (event) => {
     if (event.target && event.target.removeAttribute) event.target.removeAttribute('aria-invalid');
   });
 
+  // Back from /bedankt/ (page restored from the back/forward cache): the button is usable again and no
+  // conversion is pending.
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    if (submitButton) { submitButton.disabled = false; submitButton.textContent = submitLabel(); }
+    store.del('bcz_lead_pending');
+    store.del('bcz_lead_ud');
+  });
+
   quoteForm.addEventListener('submit', (event) => {
     event.preventDefault();
     if (error) error.hidden = true;
+    if (serverBox && serverBox !== error) serverBox.hidden = true;
 
     if (!housingRadios.some((r) => r.checked)) {
       if (steps.length === 2) showStep(1);
@@ -384,8 +540,7 @@
       store.set('bcz_lead_pending', '1');
       store.set('bcz_lead_ud', JSON.stringify(ud));
       track({ event: 'bcz_form_submit', lead_type: 'quote_form', photo_count: picked.length });
-      const submit = quoteForm.querySelector('#submit-quote');
-      if (submit) { submit.disabled = true; submit.textContent = 'Versturen…'; }
+      if (submitButton) { submitButton.disabled = true; submitButton.textContent = 'Versturen…'; }
       quoteForm.submit();
       return;
     }
@@ -398,7 +553,7 @@
       + `<div class="contact-hooks">`
       + `<a class="button button-whatsapp" href="https://wa.me/31634755656?text=Hallo%2C%20ik%20heb%20zojuist%20mijn%20aanvraag%20ingevuld%20bij%20Busje%20komt%20zo." target="_blank" rel="noopener">WhatsApp ons</a>`
       + `<a class="button" href="tel:+31850508282">Bel 085 050 8282</a>`
-      + `</div><p class="prototype-note">Ontwerpconcept: deze versie verzendt nog geen gegevens.</p></div>`;
+      + `</div></div>`;
     quoteForm.scrollIntoView({ block: 'start' });
   });
 

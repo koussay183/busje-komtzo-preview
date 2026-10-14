@@ -5,11 +5,13 @@
    ================================================================== */
 
 /* ---------- 1. Font (self-hosted, OFL) ---------- */
+/* Readiness 2026-10-15: instanced to the axes the pages use (wght 400-800, wdth 100-112), 90 KB -> 53 KB.
+   The preload in every page head must use the same URL (scripts/apply_squares_1014.py HEAD_NEW). */
 @font-face {
   font-family: "Archivo";
-  src: url("assets/fonts/archivo-latin-var.woff2") format("woff2");
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  src: url("assets/fonts/archivo-latin-var-2.woff2") format("woff2");
+  font-weight: 400 800;
+  font-stretch: 100% 112%;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -196,30 +198,23 @@ svg:has(> use):not(.google-g) { fill: none; stroke: currentColor; stroke-width: 
 .breadcrumbs a:hover { border-color: currentColor; }
 .breadcrumbs span[aria-current], .breadcrumbs > span:last-child { color: var(--ink); font-weight: 650; }
 
-/* ---------- 9. Proof bar (trust band) and authority band ---------- */
-.trust-band { background: var(--white); border-bottom: 1px solid var(--line); }
+/* ---------- 9. Trust strips: proof bar (top) and authority band (bottom) ---------- */
+/* One component: 4 equal cells, content centred, 1px dividers. Rating cells are links. */
+.trust-band, .authority-band { background: var(--white); }
+.trust-band { border-bottom: 1px solid var(--line); }
+.authority-band { border-top: 1px solid var(--line); }
 .trust-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.trust-item { display: flex; align-items: center; gap: 14px; min-height: 96px; padding: 18px 22px; border-left: 1px solid var(--line); color: var(--text); text-decoration: none; }
+.trust-item { display: flex; align-items: center; justify-content: center; gap: 14px; min-width: 0; min-height: 96px; padding: 18px 20px; border-left: 1px solid var(--line); color: var(--text); text-decoration: none; transition: background-color .15s ease; }
 .trust-item:last-child { border-right: 1px solid var(--line); }
 a.trust-item:hover { background: var(--brand-50); color: var(--text); }
-.trust-item strong { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 21px; font-weight: 800; font-stretch: 108%; line-height: 1.15; }
-.trust-item strong .stars { font-size: 13px; }
-.trust-item span:not(.stars):not(.trust-ico) { display: block; font-size: 13.5px; color: var(--muted); line-height: 1.35; }
+.trust-item > div { display: grid; gap: 2px; min-width: 0; }
+.trust-item strong { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; color: var(--ink); font-size: 20px; font-weight: 800; font-stretch: 108%; line-height: 1.15; overflow-wrap: anywhere; }
+.trust-item strong small { margin-left: -6px; color: var(--muted); font-size: 14px; font-weight: 700; }
+.trust-item strong .stars { font-size: 12px; letter-spacing: 1px; }
+.trust-item span:not(.stars):not(.trust-ico) { display: block; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
 .trust-logo { width: auto; height: 22px; flex: none; }
 .trust-ico { width: 44px; height: 44px; flex: none; display: grid; place-items: center; background: var(--brand-50); color: var(--brand); }
 .trust-ico svg { width: 22px; height: 22px; }
-.authority-band { background: var(--paper); border-top: 1px solid var(--line); }
-.authority-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.authority-item { display: flex; align-items: center; gap: 14px; min-height: 88px; padding: 16px 22px; border-left: 1px solid var(--line); }
-.authority-item:last-child { border-right: 1px solid var(--line); }
-.authority-item span { display: block; color: var(--muted); font-size: 13px; line-height: 1.3; }
-.authority-item strong { display: block; color: var(--ink); font-size: 16px; line-height: 1.3; }
-.authority-item strong a { color: inherit; text-decoration: none; }
-.authority-item strong a:hover { color: var(--brand); text-decoration: underline; }
-.authority-logo { width: auto; height: 20px; flex: none; }
-.authority-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; background: var(--white); border: 1px solid var(--line); color: var(--brand); }
-.authority-icon svg { width: 20px; height: 20px; }
-.star-ico { font-weight: 400; }
 
 /* ---------- 10. Footer ---------- */
 .site-footer { background: var(--brand-900); color: rgba(255, 255, 255, .74); font-size: 15px; }
@@ -355,7 +350,7 @@ a.trust-item:hover { background: var(--brand-50); color: var(--text); }
 
 /* ---------- Video band + why card ---------- */
 .video-band { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; min-height: clamp(460px, 50vw, 640px); padding-bottom: 140px; color: var(--white); background: var(--brand-900); }
-.video-media { position: absolute; inset: 0; z-index: -2; background: var(--brand-900) url("assets/bcz-clip-poster.webp") center / cover no-repeat; }
+.video-media { position: absolute; inset: 0; z-index: -2; background: var(--brand-900); }
 .video-media video { width: 100%; height: 100%; object-fit: cover; }
 .video-band::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(ellipse at center, rgba(0, 34, 44, .45) 0%, rgba(0, 34, 44, .78) 100%), linear-gradient(0deg, rgba(0, 34, 44, .7), rgba(0, 34, 44, .2) 60%); }
 .video-copy { display: grid; justify-items: center; text-align: center; padding-block: 72px 24px; }
@@ -980,13 +975,12 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .nav-mobile-contact .button { width: 100%; }
   .header-cta { align-self: center; min-height: 44px; }
 
-  .home-hero .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+  .home-hero .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
   .quick-card { max-width: 620px; }
   .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .trust-grid, .authority-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .trust-item, .authority-item { border-bottom: 1px solid var(--line); }
-  .trust-item:nth-child(2n), .authority-item:nth-child(2n) { border-right: 1px solid var(--line); }
-  .trust-band .trust-grid, .authority-band .authority-grid { border-top: 0; }
+  .trust-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trust-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .trust-item:nth-child(2n) { border-right: 1px solid var(--line); }
   .footer-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .footer-brand { grid-column: 1 / -1; }
   .process.process-four, .local-grid.local-grid-4, .definition-grid.definition-grid-four, .local-check-grid, .clear-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1058,13 +1052,16 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .quick-card { padding: 22px 18px; }
   .quick-card h2 { font-size: 23px; }
   .quick-tiles a { min-height: 54px; padding: 8px 10px; font-size: 14px; }
-  .trust-item { min-height: 0; padding: 14px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .trust-item strong { font-size: 18px; }
+  .trust-band > .shell, .authority-band > .shell { width: 100%; }
+  .trust-item { min-height: 0; padding: 16px 12px; flex-direction: column; justify-content: flex-start; gap: 8px; text-align: center; border-left: 0; border-right: 0; }
+  .trust-item:nth-child(2n) { border-left: 1px solid var(--line); }
+  .trust-item:last-child { border-right: 0; }
+  .trust-item > div { justify-items: center; }
+  .trust-item strong { font-size: 18px; justify-content: center; }
   .trust-item strong .stars { display: none; }
   .trust-logo { height: 18px; }
   .trust-ico { width: 36px; height: 36px; }
-  .authority-item { min-height: 0; padding: 14px 12px; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .authority-item strong { font-size: 14.5px; }
+  .trust-ico svg { width: 19px; height: 19px; }
   .collage { grid-template-rows: repeat(5, 64px); gap: 8px; }
   .collage figcaption { display: none; }
   .collage-tile { padding: 14px 56px 14px 14px; }
@@ -1115,7 +1112,7 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   .chip span { padding: 8px 14px; font-size: 14px; }
   .pack-price strong { font-size: 42px; }
   .text-link { min-height: 44px; }
-  .authority-item strong a, .who-proof a, .lead-proof a { display: inline-flex; align-items: center; min-height: 44px; }
+  .who-proof a, .lead-proof a { display: inline-flex; align-items: center; min-height: 44px; }
   .region-link, .area-chips a, .source-links a, .contact-card > a:not(.button) { min-height: 44px; }
   .footer-grid a, .footer-legal a, .cookie-settings-link { display: flex; align-items: center; min-height: 44px; padding: 0; }
   .contact-card > a:not(.button) { display: flex; align-items: center; }
@@ -1140,7 +1137,6 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reviews-track { animation: none !important; }
   .reviews-reel { overflow-x: auto; mask-image: none; }
-  .video-loop { display: none; }
 }
 
 /* ---------- Print ---------- */
@@ -1273,13 +1269,6 @@ body:has(main .contact-band) .footer-lead { display: none; }
 
 /* Collage tile on phones. */
 @media (max-width: 640px) { .collage-tile { padding-right: 48px; } .collage-tile strong { font-size: 15px; } }
-
-/* Authority band: Trustoo value on one line. */
-.authority-item { gap: 12px; padding-inline: 18px; }
-.authority-logo { height: 18px; }
-.authority-item strong { font-size: 15px; white-space: nowrap; }
-@media (min-width: 1061px) and (max-width: 1219px) { .authority-item { flex-direction: column; align-items: flex-start; gap: 8px; } }
-@media (max-width: 400px) { .authority-item strong { white-space: normal; } }
 
 /* Legal pages: no empty grid rows, chip TOC when stacked. */
 .terms-card .cookie-settings-link { color: var(--brand); font-weight: 700; }
@@ -1455,3 +1444,670 @@ body:has(main .contact-band) .footer-lead { display: none; }
 @media (max-width: 400px) { .service-hero h1 { font-size: 31px; font-stretch: 100%; letter-spacing: -.02em; } }
 .ba-grid { align-items: stretch; }
 .ba-arrow { align-self: center; }
+/* Ontruiming hero: the photo is a CSS background, so phones get the smaller file here. */
+@media (max-width: 820px) { .clear-hero { background-image: url("assets/real-moving-sofa-480.webp"); } }
+
+/* ==================================================================
+   UX review round 2 (2026-10-14): verified fixes from six reviewer
+   groups, merged and deduplicated. Each block names the finding ids it
+   implements. Markup changes live in scripts/apply_ux_round2_1014.py and
+   scripts/apply_squares_1014.py; behaviour in app.js.
+   ================================================================== */
+
+/* ---------- Header and chrome ---------- */
+/* chrome-09: from 641px the dark utility row scrolls away; only the nav row stays sticky (71px / 79px). */
+@media (min-width: 641px) {
+  .site-header { top: -38px; }
+  html { scroll-padding-top: 96px; }
+}
+@media (min-width: 1061px) {
+  .faq-grid > div:first-child, .terms-toc, .calculator-summary, .checklist-aside { top: 104px; }
+  .checklist-toolbar { top: 78px; }
+}
+/* chrome-04: WhatsApp link in the utility row. Its 960px rule replaces chrome-09's 860px one. */
+.utility-wa { gap: 7px; }
+.utility-wa-ico { width: 15px; height: 15px; flex: none; fill: currentColor; }
+@media (max-width: 960px) { .utility-note { display: none; } .utility-inner { justify-content: center; } }
+
+/* chrome-02 + SM-05 (merged): the open menu ends above the WhatsApp / Bellen / Offerte bar, so the bar
+   stays usable (app.js closes the menu when the bar is tapped). 821-1060px (no bar): the menu's own
+   Offerte / WhatsApp / Bel row is pinned to its bottom edge. */
+@media (max-width: 820px) {
+  #site-nav { bottom: calc(58px + env(safe-area-inset-bottom)); padding-bottom: 16px; box-shadow: none; border-bottom: 1px solid var(--line); }
+  .nav-mobile-contact { display: none; }
+}
+@media (min-width: 821px) and (max-width: 1060px) {
+  #site-nav { padding-bottom: 0; }
+  .nav-mobile-contact { position: sticky; bottom: 0; z-index: 1; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px calc(var(--gutter) * -1) 0; padding: 12px var(--gutter); background: var(--white); border-top: 1px solid var(--line); box-shadow: 0 -14px 24px -20px rgba(0, 34, 44, .45); }
+  /* chrome-04: Offerte, WhatsApp and Bel as three equal buttons. */
+  #site-nav .nav-mobile-contact { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 370px) and (max-width: 1060px) {
+  .nav-sub { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+  .nav-sub a { display: flex; align-items: center; min-height: 44px; padding-block: 6px; line-height: 1.25; }
+  .nav-sub .nav-sub-all { grid-column: 1 / -1; }
+}
+@media (min-width: 641px) and (max-width: 1060px) { .nav-sub { column-gap: 32px; max-width: 640px; } }
+@media (max-width: 1060px) {
+  /* The desktop dropdown's z-index would paint the list over the pinned contact row. */
+  .nav-sub { z-index: auto; }
+  #site-nav > a[aria-current="page"]::before, #site-nav .nav-item > a[aria-current="page"]::before { content: ""; width: 8px; height: 8px; margin-right: 10px; flex: none; background: var(--accent); }
+}
+
+/* F5 + SM-04 (merged): on the quote page the footer "request a quote" band and the bar's Offerte tab
+   would only reload the form. The bar keeps WhatsApp and Bellen (as on bedankt). */
+body:has(#quote-form) .footer-lead { display: none; }
+body:has(#quote-form) .mobile-actions { grid-template-columns: 1fr 1fr; }
+body:has(#quote-form) .mobile-actions .quote { display: none; }
+
+/* cards-01 (fallback): a page whose contact band is not the last block of main keeps the footer CTA,
+   so it never ends without one. Inert once the band is moved to the end (apply_ux_round2_1014.py). */
+body:not(.page-bedankt):has(main .contact-band):not(:has(main > .contact-band:last-child)) .footer-lead { display: block; }
+
+/* chrome-05 (via app.js body.is-typing): while a text field has focus the bottom bar steps aside, so it
+   never covers the field. app.js removes the class 0.4s after the field loses focus, so a tap that
+   blurs the field still lands where the finger was (the reason F2 dropped its pure-CSS :focus version). */
+body.is-typing .mobile-actions { display: none; }
+body.is-typing .m3-mini { bottom: 0; }
+body.is-typing .quote-form.is-stepped .lead-step .form-actions { bottom: 0; }
+body.is-typing .quote-form.is-stepped .step-error:not([hidden]) { bottom: 83px; }
+@media (max-width: 640px) { body.is-typing .quote-form.is-stepped .step-error:not([hidden]) { bottom: 79px; } }
+
+/* ---------- Long Dutch words on small phones ---------- */
+/* chrome-06 + heroes-O + cards-08 + SM-09 (merged): one-column grids may shrink below their longest word,
+   and the base H1/H2 minimums scale with the screen. Sizes from chrome-06 (verified together with the
+   two soft hyphens); overflow-wrap: break-word only breaks a word that cannot fit. hyphens:auto (heroes-O)
+   is left out: it would hyphenate every heading on real phones. */
+@media (max-width: 820px) {
+  .section-heading, .collage-grid, .who-grid, .editorial-grid, .faq-grid, .content-grid, .service-hero-grid,
+  .contact-band .shell, .cta-panel, .footer-lead-inner, .why-card, .quote-info-grid, .area-block { grid-template-columns: minmax(0, 1fr); }
+  .process > li > div { min-width: 0; }
+}
+@media (max-width: 640px) { .process.process-four { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 400px) {
+  h1 { font-size: min(34px, 9vw); }
+  h2 { font-size: min(30px, 7.6vw); }
+  h1, h2, h3 { overflow-wrap: break-word; }
+  /* cards-08: terms cards and TOC stay inside the 288px column. */
+  .terms-card { padding: 20px 16px; }
+  .terms-card-head { gap: 12px; }
+}
+
+/* ---------- Heroes ---------- */
+/* heroes-G + space-03 (merged): ontruiming hero, calls to action directly under the intro; the safety tags
+   and the three promises follow. From 821px the promises run in one row (space-03). */
+.clear-hero-inner { display: flex; flex-direction: column; padding-block: clamp(32px, 5vw, 72px); }
+.clear-hero-inner > * { margin-top: 0; margin-bottom: 0; }
+.clear-hero-inner > .breadcrumbs { margin-bottom: 16px; }
+.clear-hero-inner > .rating-pill { align-self: flex-start; }
+.clear-hero h1 { max-width: 22ch; margin: 16px 0; font-size: clamp(31px, 4.2vw, 56px); }
+.clear-hero .lead { max-width: 64ch; }
+.clear-hero-inner > .hero-actions { order: 1; margin-top: 26px; }
+.clear-hero-inner > .safe-tags { order: 2; margin-top: 18px; }
+.clear-hero-inner > .clear-checks { order: 3; margin-top: 22px; }
+@media (min-width: 821px) { .clear-checks { display: flex; flex-wrap: wrap; gap: 10px 24px; } }
+
+/* heroes-A: phone heroes, compact top so headline, main CTA and safety tags share the first screen. */
+@media (max-width: 640px) {
+  .service-hero > .shell, .service-hero > .shell.service-hero-grid, .inner-hero > .shell, .quote-hero > .shell, .quote-hero.compact > .shell, .clear-hero-inner { padding-top: 20px; }
+  .home-hero .hero-grid { padding-top: 26px; }
+  .home-hero .h1-kicker { margin-bottom: 14px; }
+  :is(.service-hero, .inner-hero, .quote-hero, .clear-hero) .breadcrumbs { flex-wrap: nowrap; gap: 8px; margin-bottom: 12px; font-size: 13px; white-space: nowrap; }
+  :is(.service-hero, .inner-hero, .quote-hero, .clear-hero) .breadcrumbs > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  :is(.service-hero, .inner-hero, .quote-hero, .clear-hero) .eyebrow { margin-bottom: 10px; }
+  :is(.home-hero, .service-hero, .inner-hero, .quote-hero, .clear-hero) .lead { font-size: 16.5px; line-height: 1.55; }
+}
+@media (max-width: 400px) {
+  :is(.inner-hero, .quote-hero, .clear-hero) h1 { font-size: 31px; font-stretch: 100%; letter-spacing: -.02em; }
+}
+/* Integration (heroes-A): on the smallest phones a slightly tighter trail keeps the longest town crumbs
+   ("Verhuisbedrijf Nieuwegein") whole; the ellipsis above stays as a safety net. */
+@media (max-width: 359px) {
+  :is(.service-hero, .inner-hero, .quote-hero, .clear-hero) .breadcrumbs { gap: 4px; font-size: 12.5px; }
+}
+
+/* heroes-B: phone heroes, safety tags directly under the main CTA; secondary buttons follow. */
+@media (max-width: 640px) {
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) { display: flex; flex-direction: column; gap: 12px; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > * { margin-top: 0; margin-bottom: 0; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .hero-actions { display: contents; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .hero-actions > .button:first-child { margin-top: 8px; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .safe-tags { order: 1; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .hero-actions > .button:not(:first-child) { order: 2; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .hero-actions > .button:nth-child(2) { margin-top: 4px; }
+  :is(.home-hero .hero-copy, .service-hero-grid > div:first-child, .inner-hero > .shell, .clear-hero-inner):has(> .hero-actions) > .safe-tags ~ *, .clear-hero-inner > .clear-checks { order: 3; }
+  .clear-hero-inner > .rating-pill { align-self: flex-start; }
+}
+/* F8 (merged with heroes-B): the homepage hero keeps its orange CTA, but drops the WhatsApp and Bel
+   buttons wherever the bottom bar shows them, so the quick-start tiles move up into the first screen. */
+@media (max-width: 820px) {
+  .home-hero .hero-actions .button-whatsapp, .home-hero .hero-actions .button-on-dark { display: none; }
+}
+
+/* heroes-C: safety tags on phones in two content-sized columns, no label breaks over two lines. */
+@media (max-width: 640px) {
+  .safe-tags { display: grid; grid-template-columns: repeat(2, auto); gap: 6px; }
+  .safe-tags li { min-height: 32px; padding: 4px 8px 4px 4px; gap: 6px; font-size: 13px; }
+  .safe-tags li::before { width: 18px; height: 18px; background-size: 11px; }
+}
+@media (max-width: 359px) {
+  .safe-tags { display: flex; flex-wrap: wrap; }
+  .safe-tags li { flex: 1 1 auto; padding: 3px 6px 3px 3px; gap: 5px; font-size: 12.5px; }
+  .safe-tags li::before { width: 16px; height: 16px; background-size: 10px; }
+}
+
+/* heroes-D (+ chrome-03 CSS, same rule): service and town heroes from 821px, copy starts at the top,
+   wider copy column, photo no taller than the copy. chrome-03's breadcrumb markup is in the script. */
+@media (min-width: 821px) {
+  .service-hero > .shell, .service-hero > .shell.service-hero-grid { padding-block: clamp(32px, 3.6vw, 56px); }
+  .service-hero-grid { grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); gap: 40px 56px; align-items: start; }
+  .service-hero-grid > .service-aside { margin-top: 12px; }
+  .service-photo img { aspect-ratio: 4 / 3; }
+  .service-aside:not(:has(.decision-card)) .service-photo img { aspect-ratio: 4 / 3.6; }
+  .service-hero h1 { font-size: clamp(32px, 3.7vw, 52px); max-width: 22ch; }
+}
+@media (min-width: 821px) and (max-width: 1060px) { .service-hero .safe-tags { display: grid; grid-template-columns: repeat(2, max-content); } }
+
+/* heroes-F + F4 (merged): quote page. From 641px the form card overlaps the bottom of the dark hero
+   (heroes-F); on phones the form runs full width right under a compact hero (F4). */
+.quote-hero.compact > .shell { padding-top: clamp(24px, 3.4vw, 48px); padding-bottom: clamp(56px, 5vw, 72px); }
+.quote-hero.compact + .quote-workspace { padding-top: 0; }
+.quote-hero.compact + .quote-workspace .quote-form { margin-top: clamp(-40px, -2.8vw, -28px); }
+.quote-hero .breadcrumbs { margin-bottom: 14px; }
+.quote-hero .lead { margin-bottom: 0; }
+/* heroes-F hid the orange corner mark at 1061-1199px, where the card ran into it. With space-05 the aside
+   overlaps the hero from 1200px as well, so the mark goes on every width where it would show. */
+@media (min-width: 1061px) { .quote-hero.compact::after { display: none; } }
+
+/* heroes-E: short laptop screens (1061px+ wide, at most 820px tall). After D and F (same selectors). */
+@media (min-width: 1061px) and (max-height: 820px) {
+  .home-hero .hero-grid { padding-block: 44px 36px; }
+  .home-hero h1 { font-size: clamp(42px, 4.8vw, 66px); }
+  .home-hero .h1-kicker { margin-bottom: 14px; }
+  .home-hero .hero-actions { margin-top: 24px; }
+  .inner-hero > .shell { padding-block: 52px; }
+  .quote-hero.compact > .shell { padding-top: 28px; }
+  .service-hero > .shell, .service-hero > .shell.service-hero-grid { padding-block: 28px 44px; }
+  .service-hero h1 { font-size: clamp(32px, 3.5vw, 48px); }
+  /* Integration (E + G): the ontruiming hero gets the same short-screen tier, so its buttons clear the fold. */
+  .clear-hero-inner { padding-block: 40px 56px; }
+  .clear-hero h1 { font-size: clamp(31px, 3.6vw, 48px); }
+}
+
+/* heroes-H: tablet portrait, photo and the dark checklist card side by side instead of stacked. */
+@media (min-width: 641px) and (max-width: 820px) {
+  .service-aside:has(.decision-card) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; }
+  .service-aside:has(.decision-card) .service-photo { min-height: 260px; margin: 0; }
+  .service-aside:has(.decision-card) .service-photo img { position: absolute; inset: 0; height: 100%; aspect-ratio: auto; }
+  .service-aside:has(.decision-card) .decision-card { margin: 0; align-self: stretch; }
+  .service-aside:has(.decision-card) .service-photo::before { display: none; }
+  .service-aside:has(.decision-card)::before { content: ""; position: absolute; z-index: -1; right: -16px; top: -16px; width: 42%; height: 42%; background: var(--accent); }
+}
+
+/* heroes-I: ontruiming hero on desktop, the whole portrait photo at hero height on the right. */
+@media (min-width: 1061px) {
+  .clear-hero { background: linear-gradient(90deg, var(--brand-900) calc(100% - 540px), rgba(0, 34, 44, 0) calc(100% - 280px)), url("assets/real-moving-sofa.webp") right 38% / auto 100% no-repeat, var(--brand-900); }
+  .clear-hero::before { background: linear-gradient(95deg, rgba(0, 34, 44, .96) 0%, rgba(0, 34, 44, .82) 52%, rgba(0, 34, 44, .25) 100%); }
+}
+
+/* space-11: dark inner heroes on wide screens, the four promises become a checklist card in the empty right column. */
+@media (min-width: 1200px) {
+  .inner-hero > .shell:has(> .safe-tags) { display: grid; grid-template-columns: minmax(0, 1fr) 248px; column-gap: 32px; align-content: start; padding-right: 0; }
+  .inner-hero > .shell:has(> .safe-tags) > * { grid-column: 1; }
+  .inner-hero > .shell:has(> .safe-tags) > .lead { margin-bottom: 0; }
+  .inner-hero > .shell > .safe-tags { grid-column: 2; grid-row: 1 / span 8; align-self: start; display: grid; gap: 0; margin: 0; padding: 18px 20px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .16); border-top: 4px solid var(--accent); }
+  .inner-hero > .shell > .safe-tags li { min-height: 46px; padding: 8px 0; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .12); background: none; font-size: 15px; }
+  .inner-hero > .shell > .safe-tags li:last-child { border-bottom: 0; }
+}
+
+/* space-04: the home quick-start card stays beside the copy on landscape tablets and small laptops. */
+@media (min-width: 900px) and (max-width: 1060px) {
+  .home-hero .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(300px, 340px); gap: 32px 36px; }
+  .home-hero::before { background: linear-gradient(90deg, rgba(0, 34, 44, .95) 0%, rgba(0, 34, 44, .86) 45%, rgba(0, 34, 44, .5) 78%, rgba(0, 34, 44, .35) 100%), linear-gradient(0deg, rgba(0, 34, 44, .92) 0%, rgba(0, 34, 44, 0) 38%); }
+  .home-hero h1 { font-size: clamp(42px, 5.6vw, 58px); }
+  .home-hero .hero-actions .button { flex: 1 1 auto; }
+  .home-hero .safe-tags { display: grid; grid-template-columns: repeat(2, max-content); }
+  .home-hero .quick-tiles { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Quote form (offerte) ---------- */
+/* F2: the step button stays pinned at the bottom of the screen while the step is in view (above the bar
+   on phones); a step-1 error sits right above it and the unchosen tiles turn red. */
+.quote-form.is-stepped .lead-step .form-actions { position: sticky; bottom: 0; z-index: 4; margin: 20px calc(-1 * clamp(24px, 4vw, 48px)) 0; padding: 12px clamp(24px, 4vw, 48px); background: var(--white); border-top: 1px solid var(--line); }
+.quote-form.is-stepped .step-error:not([hidden]) { position: sticky; z-index: 4; bottom: 83px; }
+.lead-step:has(.step-error:not([hidden])) .choice-tile:not(:has(input:checked)) { border-color: var(--error); }
+html:has(.quote-form.is-stepped) { scroll-padding-bottom: 100px; }
+@media (max-width: 820px) {
+  .quote-form.is-stepped .lead-step .form-actions { bottom: calc(58px + env(safe-area-inset-bottom)); }
+  .quote-form.is-stepped .step-error:not([hidden]) { bottom: calc(141px + env(safe-area-inset-bottom)); }
+  html:has(.quote-form.is-stepped) { scroll-padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+}
+
+/* F6: the step-2 error shows above the fields; the focused field leaves room for it. */
+.lead-fields > .form-error { order: -1; }
+.lead-fields:has(> .form-error:not([hidden])) [name="phone"] { scroll-margin-top: 200px; }
+.lead-fields:has(> .form-error:not([hidden])) [name="email"] { scroll-margin-top: 200px; }
+@media (max-width: 640px) { .lead-fields:has(> .form-error:not([hidden])) [name="email"] { scroll-margin-top: 300px; } }
+
+/* F3 (SM-03 merged, dropped): the step-1 choices as compact rows, icon beside the label; the check
+   replaces the icon. Two columns on phones (258px instead of SM-03's 440px one-column list). */
+.choice-tile, .home-tiles .choice-tile:last-child { min-height: 64px; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 12px; }
+.choice-ico { flex: none; width: 38px; height: 38px; }
+.choice-ico svg { width: 20px; height: 20px; }
+.choice-tile:has(input:checked)::after { top: 50%; left: 12px; right: auto; width: 38px; height: 38px; transform: translateY(-50%); background-size: 18px; }
+@media (max-width: 820px) { .home-tiles { gap: 6px; } .lead-q { margin: 20px 0 8px; } }
+@media (max-width: 640px) {
+  .choice-tile, .home-tiles .choice-tile:last-child { min-height: 60px; gap: 10px; padding: 8px; }
+  .choice-ico { width: 34px; height: 34px; }
+  .choice-text { font-size: 14px; }
+  .choice-tile:has(input:checked)::after { left: 8px; width: 34px; height: 34px; background-size: 16px; }
+}
+@media (max-width: 359px) {
+  .choice-ico { display: none; }
+  .choice-tile, .home-tiles .choice-tile:last-child { padding: 8px 26px 8px 10px; }
+  .choice-tile:has(input:checked)::after { top: 5px; right: 5px; left: auto; width: 18px; height: 18px; transform: none; background-size: 11px; }
+}
+
+/* F7: on laptops "Liever direct contact? App ons of bel" sits beside the step button (markup in the script). */
+.lead-alt { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.lead-alt a { font-weight: 700; }
+@media (min-width: 821px) {
+  .quote-form .lead-step .form-actions:has(.lead-alt) { display: flex; align-items: center; gap: 12px 24px; }
+  .quote-form .lead-step .form-actions:has(.lead-alt) .button { flex: 1 1 auto; width: auto; }
+  .lead-alt { flex: 0 1 220px; }
+}
+@media (max-width: 820px) { .lead-alt { display: none; } }
+
+/* space-05: "Zo werkt uw aanvraag" (WhatsApp, Bel, m³ link) moves from a section 1000px down into an
+   aside next to the form: below it up to 1199px, a sticky column beside it from 1200px. */
+.quote-layout { display: grid; gap: 24px; }
+.quote-workspace .quote-layout .quote-form { width: 100%; max-width: 860px; margin-inline: auto; }
+.quote-aside { width: 100%; max-width: 860px; margin-inline: auto; display: grid; align-content: start; background: var(--white); border: 1px solid var(--line); }
+.quote-aside > div { padding: 24px 28px 28px; }
+.quote-aside h2 { font-size: clamp(24px, 2.2vw, 28px); }
+.quote-aside .quote-proof { margin-top: 14px; font-size: 15.5px; }
+.quote-aside .contact-hooks { display: grid; gap: 8px; margin-top: 20px; }
+.quote-aside .contact-hooks .button { width: 100%; }
+.quote-aside .quote-intro-photo img { aspect-ratio: 16 / 9; }
+@media (min-width: 641px) and (max-width: 1199px) {
+  .quote-aside { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+  .quote-aside .quote-intro-photo { order: -1; }
+  .quote-aside .quote-intro-photo img { height: 100%; aspect-ratio: auto; }
+}
+@media (min-width: 1200px) {
+  .quote-layout { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; gap: 32px; }
+  .quote-workspace .quote-layout .quote-form { max-width: none; }
+  /* top: 104px follows the chrome-09 header (was 140px). */
+  .quote-aside { position: sticky; top: 104px; max-width: none; }
+  .quote-aside h2 { font-size: 24px; }
+  /* Integration (heroes-F): the aside rises into the dark hero with the form, so both cards start level. */
+  .quote-hero.compact + .quote-workspace .quote-aside { margin-top: clamp(-40px, -2.8vw, -28px); }
+}
+
+/* F4 + heroes-F phones (merged, adapted to the space-05 markup): compact hero, no breadcrumbs, and the
+   form full width with 16px padding, so the step-1 question and the first tiles sit above the pinned button. */
+@media (max-width: 640px) {
+  .quote-hero .breadcrumbs { display: none; }
+  .quote-hero .lead { font-size: 16px; }
+  .quote-hero.compact > .shell { padding-top: 20px; padding-bottom: 24px; }
+  .quote-hero.compact h1 { font-size: 28px; font-stretch: 100%; }
+  .quote-workspace { padding-top: 0; }
+  .quote-workspace .quote-layout { width: 100%; gap: 16px; }
+  .quote-hero.compact + .quote-workspace .quote-layout .quote-form { margin-top: 0; padding: 20px 16px 24px; border-inline: 0; box-shadow: none; }
+  .quote-aside { border-inline: 0; }
+  .quote-aside > div { padding: 22px 16px 24px; }
+  .quote-form .lead-progress { margin-bottom: 14px; }
+  .quote-form .lead-step-title { font-size: 23px; }
+  .lead-step-sub { margin-bottom: 14px; }
+  .quote-form.is-stepped .lead-step .form-actions { margin-inline: -16px; padding: 10px 16px; }
+  .quote-form.is-stepped .step-error:not([hidden]) { bottom: calc(137px + env(safe-area-inset-bottom)); }
+}
+
+/* ---------- Homepage ---------- */
+/* SM-06: the six quick-start tiles share the card width; on the smallest phones the icon sits above the label. */
+@media (max-width: 640px) { .quick-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 360px) {
+  .quick-card { padding: 20px 14px; }
+  .quick-tiles a { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; padding: 8px 10px; }
+}
+
+/* SM-15 (+ F8's quick-proof part, merged): Google and Trustoo side by side in one row on phones. */
+@media (max-width: 640px) {
+  .quick-proof, .who-proof, .lead-proof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  :is(.quick-proof, .who-proof, .lead-proof) a { flex: none; flex-wrap: wrap; min-width: 0; min-height: 44px; justify-content: center; gap: 0 6px; }
+  .who-proof a { padding: 8px 10px; }
+}
+@media (max-width: 480px) {
+  :is(.quick-proof, .who-proof, .lead-proof) .stars { display: none; }
+}
+
+/* cards-06 (space-13 merged, dropped): homepage FAQ, heading left and questions right like every other
+   FAQ; the "Staat uw vraag er niet bij?" card (Bel / WhatsApp) fills the left column under the heading. */
+@media (min-width: 1061px) {
+  .faq-section > .shell:has(> .faq-head) { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); grid-template-rows: auto 1fr; gap: 0 72px; align-items: start; }
+  .faq-section > .shell > .faq-head { grid-column: 1; grid-row: 1; margin: 0; }
+  .faq-section > .shell > .faq-head h2 { font-size: clamp(26px, 2.6vw, 36px); }
+  .faq-section > .shell > .faq-list { grid-column: 2; grid-row: 1 / span 2; }
+  .faq-section > .shell > .faq-help { grid-column: 1; grid-row: 2; grid-template-columns: 1fr; margin-top: 28px; }
+  .faq-section > .shell > .faq-help .contact-hooks { grid-column: 1; grid-row: auto; margin-top: 8px; }
+  .faq-section > .shell > .faq-help .contact-hooks .button { flex: 1 1 auto; }
+}
+
+/* space-12: wide screens with a mouse, the review reel runs edge to edge instead of stopping at the shell. */
+@media (min-width: 1400px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .reviews-reel { width: min(100vw, 2200px); margin-left: calc(50% - min(50vw, 1100px)); mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%); }
+}
+
+/* ---------- Service cards (index #diensten, diensten) ---------- */
+/* cards-03 (SM-10 merged, dropped): on phones the "Meer hierover" bar becomes a 48px arrow square in the
+   card corner (the whole card is already a link); only the phone link (Spoedverhuizing) keeps its row.
+   The flush corner square matches the collage tile on phones. cards-03's tablet min-height rule is
+   covered by space-08. */
+@media (max-width: 640px) {
+  .svc-card { padding: 20px 16px 18px; row-gap: 12px; }
+  .svc-card:has(> .svc-link:not([href^="tel:"])) h3 { padding-right: 46px; }
+  .svc-link:not([href^="tel:"]) { grid-area: auto; position: absolute; top: 0; right: 0; width: 48px; height: 48px; min-height: 0; margin: 0; padding: 0; border: 0; font-size: 0; }
+  .svc-link:not([href^="tel:"]) span { width: 48px; height: 48px; font-size: 19px; }
+  .svc-link[href^="tel:"] { margin: 6px -16px -18px; }
+}
+/* space-08: four across down to 900px; below that compact cards (icon beside the title) in two columns. */
+@media (min-width: 900px) and (max-width: 1060px) {
+  .svc-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .svc-card { min-height: 270px; padding-inline: 20px; }
+  .svc-link { margin-inline: -20px; padding-left: 20px; }
+  .svc-card h3 { font-size: 19px; }
+}
+@media (min-width: 641px) and (max-width: 899px) {
+  .svc-card { display: grid; grid-template-columns: 44px minmax(0, 1fr); grid-template-rows: auto 1fr auto; gap: 6px 14px; min-height: 0; padding: 20px 20px 0; }
+  .svc-ico { width: 44px; height: 44px; }
+  .svc-ico svg { width: 22px; height: 22px; }
+  .svc-card h3 { margin: 0; font-size: 18px; align-self: center; }
+  .svc-card p { grid-column: 1 / -1; font-size: 15px; }
+  .svc-link { grid-column: 1 / -1; margin: 14px -20px 0; padding-left: 20px; min-height: 48px; }
+  .svc-link span { width: 48px; }
+}
+
+/* ---------- Content cards on phones ---------- */
+/* cards-07 + SM-11 (merged): one card padding; every step list (process, journey, clear-steps) puts a
+   40px number square beside its title with the text across the full card width (SM-11's pattern, with
+   cards-07's square size); icon and number cards put the mark beside the heading (cards-07's guarded
+   selectors, SM-11's text-link alignment). */
+@media (max-width: 640px) {
+  .route-scenario-card, .definition-grid > article, .local-card, .local-check-card, .tip-card,
+  .process li, .journey li, .clear-steps li, .source-panel { padding: 20px 18px; }
+  .cta-panel, .faq-help { padding: 22px 18px 22px 20px; }
+  .process > li, .journey li, .clear-steps li { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 10px 14px; }
+  .process > li > div, .journey li > div, .clear-steps li > div { display: contents; }
+  .process li > span, .journey li > span, .clear-steps li > span { width: 40px; height: 40px; font-size: 15px; }
+  .process > li h3, .journey li h3 { margin: 0; font-size: 18px; }
+  .clear-steps li strong { margin: 0; }
+  .process > li p, .journey li p, .clear-steps li p { grid-column: 1 / -1; }
+  .tips-list li { padding-left: 54px; }
+  .tips-list li::before { width: 40px; height: 40px; }
+  :is(.local-card, .route-scenario-card, .definition-grid > article, .local-check-card):has(> :is(span, .card-number, .pack-ico):first-child + h3) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 14px; align-items: center; }
+  :is(.local-card, .route-scenario-card, .definition-grid > article, .local-check-card):has(> :is(span, .card-number, .pack-ico):first-child + h3) > :not(:first-child, h3) { grid-column: 1 / -1; }
+  :is(.local-card, .route-scenario-card, .definition-grid > article, .local-check-card) > :is(span, .card-number, .pack-ico):first-child { margin: 0; align-self: center; }
+  :is(.local-card, .route-scenario-card, .definition-grid > article, .local-check-card) > :is(span, .card-number, .pack-ico):first-child + h3 { margin: 0; }
+  :is(.local-card, .route-scenario-card, .definition-grid > article, .local-check-card) > .text-link { justify-self: start; margin-top: 0; }
+}
+
+/* cards-12 + space-09 (merged): four-card grids never leave one card alone on a row, 2 x 2 on tablets and
+   4 across from 1061px (space-09; cards-12 kept 2 x 2 up to 1143px). Definition grids switch at 980px,
+   where four fit (cards-12's exact breakpoint). */
+@media (min-width: 641px) and (max-width: 1060px) {
+  .local-grid:has(> :nth-child(4):last-child) > * { flex-basis: calc(50% - 8px); }
+  .timeline-grid:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1061px) {
+  .local-grid:has(> :nth-child(4):last-child) > * { flex-basis: calc(25% - 12px); }
+  .timeline-grid:has(> :nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (min-width: 641px) and (max-width: 979px) {
+  .definition-grid:has(> :nth-child(4):last-child) > * { flex-basis: 50%; }
+}
+
+/* cards-10 + SM-13 (merged): town links and area chips two per row on phones; on desktop the area
+   chips fill each row evenly. */
+.area-chips li { flex: 1 1 auto; }
+.area-chips a { width: 100%; }
+@media (max-width: 640px) {
+  .region-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .region-grid .region-link:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .region-link { min-height: 52px; padding: 6px 12px; font-size: 14px; line-height: 1.25; gap: 8px; }
+  .area-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .area-chips li { flex: none; }
+  .area-chips a { height: 100%; min-height: 52px; padding: 6px 12px; font-size: 14px; line-height: 1.25; }
+}
+
+/* ---------- Contact blocks ---------- */
+/* F11 (phones) + cards-04 (tablets), merged: the contact band's three buttons no longer stack as three
+   full-width bars. 360-640px: WhatsApp and Bel side by side, the orange button on its own row (F11);
+   641-820px: all three in one row, like the footer CTA (cards-04). Below 360px the stack stays. */
+@media (min-width: 360px) and (max-width: 640px) {
+  .contact-band .contact-hooks { grid-template-columns: 1fr 1fr; }
+  .contact-band .contact-hooks .button-gold { grid-column: 1 / -1; grid-row: 2; }
+  .contact-band .contact-hooks .button:not(.button-gold) { padding-inline: 8px; font-size: 14.5px; gap: 8px; }
+}
+@media (min-width: 641px) and (max-width: 820px) {
+  .contact-band .contact-hooks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .contact-band .contact-hooks .button { padding-inline: 12px; }
+}
+/* cards-05: the over-ons and verhuislift-huren contact cards get WhatsApp next to the orange quote button. */
+.contact-card .contact-hooks { display: grid; gap: 8px; margin-top: 4px; }
+.contact-card .contact-hooks .button { width: 100%; }
+
+/* cards-09: before / after on phones side by side, so the change reads at a glance. */
+@media (max-width: 640px) {
+  .ba-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+  .ba-arrow { display: none; }
+  .ba-card img { aspect-ratio: 1 / 1; }
+  .ba-card figcaption { padding: 10px 10px 12px; font-size: 14px; line-height: 1.4; }
+  .ba-tag { padding: 5px 10px; font-size: 12.5px; }
+}
+
+/* cards-13: two sections with the same background share one padding (grey + grey with a 1px line; a plain
+   white section followed by the white FAQ). */
+:is(.soft, .local-guide, .editorial-section, .quote-workspace) + :is(.soft, .local-guide, .editorial-section) { padding-top: calc(var(--section) * .6); border-top: 1px solid var(--line); }
+.section[class="section"] + .faq-section:not(.soft) { padding-top: 0; }
+
+/* ---------- Trust strips ---------- */
+/* chrome-10 (space-10 merged, dropped: same idea for 900-1160px only): from 641 to 1199px the four proof
+   cells sit in one row as compact stacked cells, values on one level. */
+@media (max-width: 1199px) { .trust-item { justify-content: flex-start; } }
+@media (min-width: 641px) and (max-width: 1199px) {
+  .trust-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .trust-item { flex-direction: column; gap: 8px; min-height: 0; padding: 18px 10px; text-align: center; }
+  .trust-item:nth-child(-n+2) { border-bottom: 0; }
+  .trust-item:nth-child(2n):not(:last-child) { border-right: 0; }
+  .trust-item > div { justify-items: center; }
+  .trust-item strong { justify-content: center; }
+  .trust-logo { margin-block: 11px; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .trust-item strong { font-size: 17px; }
+  .trust-item strong .stars { display: none; }
+  .trust-item span:not(.stars):not(.trust-ico) { font-size: 13px; }
+}
+
+/* ---------- Footer ---------- */
+/* chrome-07: the footer CTA band, heading on two lines when stacked; on phones less padding and
+   WhatsApp + Bel side by side under the orange button (from 390px, where both labels fit). */
+@media (max-width: 1120px) { .footer-lead h2 { max-width: 22ch; } }
+@media (max-width: 640px) { .footer-lead-inner { padding-block: 44px 40px; gap: 24px; } }
+@media (min-width: 390px) and (max-width: 640px) {
+  .footer-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-actions .button-gold { grid-column: 1 / -1; }
+  .footer-actions .button { padding-inline: 10px; }
+}
+/* chrome-11 + SM-14 (merged; space-15 dropped, same tablet idea from 760px only): phones, "Informatie"
+   spans the row with its links in two columns; tablets, logo and rating beside the name and intro. */
+@media (max-width: 640px) {
+  .footer-grid > div:nth-child(4) { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+  .footer-grid > div:nth-child(4) > strong { grid-column: 1 / -1; }
+}
+@media (min-width: 641px) and (max-width: 1060px) {
+  .footer-brand { display: grid; grid-template-columns: max-content minmax(0, 1fr); grid-template-areas: "logo name" "logo text" "rating text"; column-gap: 40px; align-items: start; }
+  .footer-brand .footer-logo { grid-area: logo; justify-self: start; margin-bottom: 12px; }
+  .footer-brand > strong { grid-area: name; margin: 0 0 6px; }
+  .footer-brand p { grid-area: text; margin: 0; }
+  .footer-brand .footer-rating { grid-area: rating; justify-self: start; }
+}
+
+/* ---------- m³ calculator ---------- */
+/* F9 + space-02 (merged): the offer button now follows the total in the markup (script), so it is in reach
+   in the sticky summary; the mini total gets an arrow and stays on one line. */
+.calculator-summary #m3-quote-link { margin-top: 18px; }
+.m3-mini strong { flex: none; white-space: nowrap; }
+.m3-mini strong::after { content: "\2192"; content: "\2192" / ""; margin-left: 10px; font-size: 18px; color: var(--accent); }
+@media (max-width: 359px) { .m3-mini { gap: 8px; padding-inline: 14px; font-size: 13.5px; } .m3-mini strong { font-size: 19px; } .m3-mini strong::after { margin-left: 6px; } }
+/* space-02: the sticky summary is never taller than the screen (top 104px after chrome-09, was 140px). */
+@media (min-width: 1061px) {
+  .calculator-summary { max-height: calc(100vh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .35) transparent; }
+}
+/* space-06: running total and offer button beside the list down to 900px (top 96px = chrome-09's 71px header + 25px). */
+@media (min-width: 900px) and (max-width: 1060px) {
+  .calculator-layout { grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; }
+  .calculator-summary { position: sticky; top: 96px; max-height: calc(100vh - 112px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .35) transparent; padding: 20px 22px; }
+  .calculator-summary h2 { font-size: 22px; }
+  .calculator-summary .m3-total { margin: 10px 0 6px; font-size: 48px; }
+  .calculator-summary > p { margin: 14px 0; }
+  .calculator-summary .box-equivalent { margin-top: 14px; padding: 10px 14px; }
+  .m3-mini { display: none; }
+}
+/* SM-07: a long item name no longer runs under the - / + buttons; the row wraps only when it must. */
+@media (max-width: 640px) {
+  .inventory-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 10px; row-gap: 6px; }
+  .inventory-row > div:first-child { flex: 1 1 0; min-width: min-content; }
+  .quantity-control { flex: none; margin-left: auto; grid-template-columns: 44px 44px 44px; }
+}
+@media (max-width: 400px) {
+  .calculator-panel { padding-inline: 12px; }
+  .inventory-items { padding: 0 10px; }
+  .inventory-row > div:first-child { font-size: 15px; }
+}
+
+/* ---------- Checklist ---------- */
+/* F10: in one column the PDF lead magnet and "Liever meteen een verhuizer?" follow task group 2, not group 8. */
+@media screen and (max-width: 1060px) {
+  .checklist-layout { row-gap: 0; }
+  .checklist-main, #checklist { display: contents; }
+  #checklist > .cl-group:nth-child(n+3) { order: 2; }
+  .checklist-aside { order: 1; margin-bottom: 40px; }
+}
+/* space-07: on laptop-height screens the "Liever meteen een verhuizer?" panel stays in view next to the list
+   (top 104px, the chrome-09 sticky column offset; was 116px). */
+@media (min-width: 1061px) and (max-height: 1050px) {
+  .checklist-layout { align-items: stretch; }
+  .checklist-aside { align-content: start; }
+  .checklist-cta { position: sticky; top: 104px; }
+}
+
+/* ---------- Text size, tap targets, measure ---------- */
+/* SM-16: on phones the sentences that steer the lead read at 15px; short labels stay small. */
+@media (max-width: 640px) {
+  .hero-note, .quick-alt, .hero-steps small, .field-hint, .field-note, .privacy-note, .quote-calc-link,
+  .extra-volume small, .extra-volume > span, .calculator-summary > p, .cl-group-head p, .map-card p, .source-links a { font-size: 15px; }
+}
+/* SM-17: touch screens, breadcrumb and terms TOC links get a 44px hit area; the text does not move. */
+@media (max-width: 1060px) {
+  .breadcrumbs a { display: inline-flex; align-items: center; min-height: 44px; margin: -10px -4px; padding-inline: 4px; }
+  .terms-toc a { min-height: 44px; }
+}
+/* space-16: long body text follows the spec measure (--measure: 70ch). */
+.local-guide-head p:not(.eyebrow) { max-width: var(--measure); }
+.terms-card > p, .terms-card > ol, .terms-card > ul { max-width: var(--measure); }
+
+/* ---------- Landscape phones and short screens (last, so it wins) ---------- */
+/* space-01 + chrome-09 (merged): no utility row, a 56px nav row and a 48px bar. Up to 820px wide the header
+   scrolls away (chrome-09; the bar keeps WhatsApp / Bellen / Offerte); wider landscape phones keep the slim
+   sticky header and also get the bar (space-01). */
+@media (max-height: 500px) and (orientation: landscape) {
+  html { scroll-padding-top: 72px; }
+  .utility { display: none; }
+  .site-header { top: 0; }
+  .nav-shell { min-height: 56px; }
+  .brand-logo img { width: 150px; }
+  .home-hero .hero-grid { padding-block: 22px 24px; }
+  .home-hero h1 { max-width: 20ch; font-size: clamp(32px, 6vw, 44px); margin-bottom: 14px; }
+  .h1-kicker { margin-bottom: 12px; }
+  .home-hero .hero-actions { margin-top: 20px; }
+  .quote-hero.compact > .shell, .inner-hero > .shell, .service-hero > .shell, .service-hero > .shell.service-hero-grid, .clear-hero-inner { padding-block: 20px 24px; }
+  .inner-hero h1, .quote-hero h1, .service-hero h1, .clear-hero h1 { max-width: none; }
+}
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 820px) {
+  .site-header { position: relative; }
+  html { scroll-padding-top: 16px; }
+}
+@media (max-height: 500px) and (orientation: landscape) and (min-width: 900px) {
+  .calculator-summary { top: 72px; max-height: calc(100vh - 136px); }
+}
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 820px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) and (max-width: 1060px) {
+  .mobile-actions { position: fixed; z-index: 55; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr 1.15fr; padding-bottom: env(safe-area-inset-bottom); background: var(--white); box-shadow: 0 -12px 30px -18px rgba(0, 34, 44, .45); }
+  .mobile-actions a { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--white); font-size: 15px; font-weight: 750; text-decoration: none; }
+  .mobile-actions .btn-icon { width: 19px; height: 19px; }
+  .mobile-actions .call .btn-icon { fill: none; }
+  .mobile-actions .wa { background: var(--wa); }
+  .mobile-actions .call { background: var(--brand-deep); }
+  .mobile-actions .quote { background: var(--accent); color: var(--accent-ink); }
+  body { padding-bottom: calc(48px + env(safe-area-inset-bottom)); }
+  .m3-mini { bottom: calc(48px + env(safe-area-inset-bottom)); }
+  .header-cta { display: none; }
+  /* Integration: the menu, the pinned step button and its error sit above the 48px bar (chrome-02, F2). */
+  #site-nav { bottom: calc(48px + env(safe-area-inset-bottom)); padding-bottom: 16px; }
+  .nav-mobile-contact { display: none; }
+  .quote-form.is-stepped .lead-step .form-actions { bottom: calc(48px + env(safe-area-inset-bottom)); }
+  .quote-form.is-stepped .step-error:not([hidden]) { bottom: calc(131px + env(safe-area-inset-bottom)); }
+}
+
+/* ==================================================================
+   Deployment readiness (2026-10-15, build 20261015-sq2): fixes from
+   DEPLOYMENT-READINESS-2026-10-14.md. Each block names its item id.
+   Markup lives in scripts/apply_readiness_1015.py and
+   scripts/apply_squares_1014.py; behaviour in app.js.
+   ================================================================== */
+
+/* M-A3 + M-A4: form field borders 3.35:1 on white (was 1.77:1), placeholder text 5.02:1 (was 2.99:1). */
+:root { --line-strong: #7a9097; }
+::placeholder { color: var(--muted); }
+
+/* H4 (WCAG 2.4.11): the fixed bottom bar never hides the focused element. The
+   html:has(.quote-form.is-stepped) rules in sq-7 are more specific and still win on the quote page. */
+@media (max-width: 820px) {
+  html { scroll-padding-bottom: calc(58px + 16px + env(safe-area-inset-bottom)); }
+}
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 820px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) and (max-width: 1060px) {
+  html { scroll-padding-bottom: calc(48px + 16px + env(safe-area-inset-bottom)); }
+}
+
+/* H5: the menu button now comes before the menu in the DOM (focus order); order keeps it on the right. */
+.menu-toggle { order: 1; }
+
+/* M-A2 (1.4.13): Escape hides the desktop "Diensten" submenu until the pointer or focus leaves it. */
+@media (min-width: 1061px) {
+  .nav-item.has-sub.is-dismissed .nav-sub { visibility: hidden; opacity: 0; transform: translateY(6px); }
+}
+
+/* H8: art-directed phone crop of the homepage hero (<picture>); the image keeps filling the media box. */
+.hero-media picture { display: block; width: 100%; height: 100%; }
+
+/* H6 + M-A1 (2.2.2): pause button for the reviews marquee, and a focusable reel. Where the marquee does not
+   run (touch screens, reduced motion) the reel scrolls by hand and the button is not needed. */
+.reel-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; margin: 0 0 16px; padding: 0 16px; border: 1px solid rgba(255, 255, 255, .45); background: transparent; color: var(--white); font: inherit; font-size: 14.5px; font-weight: 750; line-height: 1.2; cursor: pointer; transition: background-color .15s ease, border-color .15s ease; }
+.reel-toggle::before { content: ""; width: 10px; height: 12px; box-sizing: border-box; border-inline: 3px solid currentColor; }
+.reel-toggle:hover { border-color: var(--white); background: rgba(255, 255, 255, .08); }
+.reel-toggle[aria-pressed="true"] { border-color: var(--white); background: rgba(255, 255, 255, .14); }
+.reel-toggle[aria-pressed="true"]::before { width: 0; height: 0; border-inline: 0; border-left: 10px solid currentColor; border-block: 6px solid transparent; }
+.reviews-reel.is-paused .reviews-track { animation-play-state: paused; }
+.reviews-reel:focus-visible { outline: 3px solid var(--white); outline-offset: -3px; }
+@media (hover: none), (prefers-reduced-motion: reduce) { .reel-toggle { display: none; } }
+
+/* H7 (2.2.2): pause button for the homepage background loop. It sits in .video-band (not in .video-media,
+   which is a z-index -2 layer under the copy), top right, clear of the "why us" card. */
+.loop-toggle { position: absolute; z-index: 1; top: 16px; right: 16px; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(255, 255, 255, .5); background: rgba(0, 34, 44, .55); color: var(--white); cursor: pointer; transition: background-color .15s ease, border-color .15s ease; }
+.loop-toggle::before { content: ""; width: 12px; height: 14px; box-sizing: border-box; border-inline: 4px solid currentColor; }
+.loop-toggle:hover { border-color: var(--white); background: rgba(0, 34, 44, .8); }
+.loop-toggle[aria-pressed="true"]::before { width: 0; height: 0; margin-left: 4px; border-inline: 0; border-left: 12px solid currentColor; border-block: 7px solid transparent; }
+
+/* Lead form: server errors (?fout=) get their own alert above the steps, so they show in step 1 too. */
+.quote-form > .server-error { margin: 0 0 20px; }
+.quote-form > .server-error:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
